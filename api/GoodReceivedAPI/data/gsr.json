@@ -1,0 +1,44 @@
+{
+  "goodsReceived": [
+    {
+      "SerialNumber": "SN12345",
+      "AssetTagNumber": "AT-9876",
+      "Status": "Received",
+      "PurchaseOrderNumber": "PO-2025-1234",
+      "ItemId": "ITEM001",
+      "ReceivedDate": "2025-03-18"
+    },
+    {
+      "SerialNumber": "",
+      "AssetTagNumber": "",
+      "Status": "Not Received",
+      "PurchaseOrderNumber": "PO-2025-1234",
+      "ItemId": "ITEM002",
+      "ReceivedDate": ""
+    },
+    {
+      "SerialNumber": "SN24680",
+      "AssetTagNumber": "AT-1357",
+      "Status": "Received",
+      "PurchaseOrderNumber": "PO-2025-1456",
+      "ItemId": "TS001",
+      "ReceivedDate": "2025-03-03"
+    },
+    {
+      "SerialNumber": "SN13579",
+      "AssetTagNumber": "AT-2468",
+      "Status": "Received",
+      "PurchaseOrderNumber": "PO-2025-1456",
+      "ItemId": "TS002",
+      "ReceivedDate": "2025-03-03"
+    },
+    {
+      "SerialNumber": "SN11111",
+      "AssetTagNumber": "AT-22222",
+      "Status": "Received",
+      "PurchaseOrderNumber": "PO-2025-2157",
+      "ItemId": "SVC001",
+      "ReceivedDate": "2025-03-27"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "SafeLimits": [
+    {
+      "UserId": "user001",
+      "UserName": "Sarah Johnson",
+      "ApprovalLimit": 100.00,
+      "Currency": "USD",
+      "Role": "Finance Manager"
+    },
+    {
+      "UserId": "user002",
+      "UserName": "Michael Chen",
+      "ApprovalLimit": 10000.00,
+      "Currency": "USD",
+      "Role": "Finance Director"
+    },
+    {
+      "UserId": "user003",
+      "UserName": "David Rodriguez",
+      "ApprovalLimit": 2500.00,
+      "Currency": "USD",
+      "Role": "Accounting Specialist"
+    },
+    {
+      "UserId": "user004",
+      "UserName": "Emily Wilson",
+      "ApprovalLimit": 7500.00,
+      "Currency": "USD",
+      "Role": "Procurement Manager"
+    }
+  ]
+}

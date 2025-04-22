@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  invoiceapi:
+    build:
+      context: ./InvoiceAPI
+      dockerfile: Dockerfile
+    ports:
+      - "5136:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DataFilePath=/app/data/invoices.json
+    volumes:
+      - ./InvoiceAPI/data:/app/data
+    networks:
+      - sk-network
+
+  goodreceivedapi:
+    build:
+      context: ./GoodReceivedAPI
+      dockerfile: Dockerfile
+    ports:
+      - "5284:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DataFilePath=/app/data/gsr.json
+    volumes:
+      - ./GoodReceivedAPI/data:/app/data
+    networks:
+      - sk-network
+
+  purchaseorderapi:
+    build:
+      context: ./PurchaseOrderAPI
+      dockerfile: Dockerfile
+    ports:
+      - "5294:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DataFilePath=/app/data/purchase-orders.json
+    volumes:
+      - ./PurchaseOrderAPI/data:/app/data
+    networks:
+      - sk-network
+
+  safelimitapi:
+    build:
+      context: ./SafeLimitAPI
+      dockerfile: Dockerfile
+    ports:
+      - "5310:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DataFilePath=/app/data/safe-limits.json
+    volumes:
+      - ./SafeLimitAPI/data:/app/data
+    networks:
+      - sk-network
+
+networks:
+  sk-network:
+    driver: bridge

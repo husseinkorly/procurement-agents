@@ -1,0 +1,159 @@
+{
+  "Invoices": [
+    {
+      "InvoiceNumber": "INV-2025-0001",
+      "PurchaseOrderNumber": "PO-2025-1234",
+      "SupplierName": "Office Supplies Inc.",
+      "SupplierId": "SUP001",
+      "InvoiceDate": "2025-03-15",
+      "DueDate": "2025-04-15",
+      "Approver": "Sarah Johnson",
+      "LineItems": [
+        {
+          "ItemId": "ITEM001",
+          "Description": "Premium Paper (Letter Size, 500 sheets)",
+          "Quantity": 10,
+          "UnitPrice": 8.99,
+          "TotalPrice": 89.9
+        },
+        {
+          "ItemId": "ITEM002",
+          "Description": "Ink Cartridges (Black)",
+          "Quantity": 5,
+          "UnitPrice": 24.99,
+          "TotalPrice": 124.95
+        }
+      ],
+      "Subtotal": 214.85,
+      "Tax": 17.19,
+      "Shipping": 12.5,
+      "Total": 244.54,
+      "Currency": "USD",
+      "Status": "Pending Approval"
+    },
+    {
+      "InvoiceNumber": "INV-2025-0002",
+      "PurchaseOrderNumber": "PO-2025-1456",
+      "SupplierName": "Tech Solutions",
+      "SupplierId": "SUP002",
+      "InvoiceDate": "2025-02-28",
+      "DueDate": "2025-03-31",
+      "Approver": "Michael Chen",
+      "LineItems": [
+        {
+          "ItemId": "TS001",
+          "Description": "Monitor - 27 4K UHD",
+          "Quantity": 2,
+          "UnitPrice": 349.99,
+          "TotalPrice": 699.98
+        },
+        {
+          "ItemId": "TS002",
+          "Description": "Wireless Keyboard and Mouse Combo",
+          "Quantity": 3,
+          "UnitPrice": 79.99,
+          "TotalPrice": 239.97
+        }
+      ],
+      "Subtotal": 939.95,
+      "Tax": 75.2,
+      "Shipping": 0,
+      "Total": 1015.15,
+      "Currency": "USD",
+      "Status": "Approved"
+    },
+    {
+      "InvoiceNumber": "INV-2025-0003",
+      "PurchaseOrderNumber": "PO-2025-2157",
+      "SupplierName": "Maintenance Services",
+      "SupplierId": "SUP003",
+      "InvoiceDate": "2025-03-25",
+      "DueDate": "2025-04-25",
+      "Approver": "David Rodriguez",
+      "LineItems": [
+        {
+          "ItemId": "SVC001",
+          "Description": "Quarterly HVAC Maintenance",
+          "Quantity": 1,
+          "UnitPrice": 1250,
+          "TotalPrice": 1250
+        },
+        {
+          "ItemId": "SVC002",
+          "Description": "Emergency Plumbing Repair",
+          "Quantity": 1,
+          "UnitPrice": 450,
+          "TotalPrice": 450
+        }
+      ],
+      "Subtotal": 1700,
+      "Tax": 136,
+      "Shipping": 0,
+      "Total": 1836,
+      "Currency": "USD",
+      "Status": "Paid"
+    },
+    {
+      "InvoiceNumber": "INV-2025-0004",
+      "PurchaseOrderNumber": "PO-2025-3289",
+      "SupplierName": "Catering Express",
+      "SupplierId": "SUP004",
+      "InvoiceDate": "2025-03-30",
+      "DueDate": "2025-04-30",
+      "Approver": "Emily Wilson",
+      "LineItems": [
+        {
+          "ItemId": "CAT001",
+          "Description": "Executive Lunch Meeting (25 people)",
+          "Quantity": 1,
+          "UnitPrice": 625,
+          "TotalPrice": 625
+        },
+        {
+          "ItemId": "CAT002",
+          "Description": "Coffee and Refreshments Service",
+          "Quantity": 2,
+          "UnitPrice": 175,
+          "TotalPrice": 350
+        }
+      ],
+      "Subtotal": 975,
+      "Tax": 87.75,
+      "Shipping": 25,
+      "Total": 1087.75,
+      "Currency": "USD",
+      "Status": "Pending Approval"
+    },
+    {
+      "InvoiceNumber": "INV-2025-0005",
+      "PurchaseOrderNumber": "PO-2025-4002",
+      "SupplierName": "Consulting Partners",
+      "SupplierId": "SUP005",
+      "InvoiceDate": "2025-02-15",
+      "DueDate": "2025-03-17",
+      "Approver": "Sarah Johnson",
+      "LineItems": [
+        {
+          "ItemId": "CONS001",
+          "Description": "Strategic Planning Workshop",
+          "Quantity": 1,
+          "UnitPrice": 5000,
+          "TotalPrice": 5000
+        },
+        {
+          "ItemId": "CONS002",
+          "Description": "Market Analysis Report",
+          "Quantity": 1,
+          "UnitPrice": 3500,
+          "TotalPrice": 3500
+        }
+      ],
+      "Subtotal": 8500,
+      "Tax": 680,
+      "Shipping": 0,
+      "Total": 9180,
+      "Currency": "USD",
+      "Status": "Rejected"
+    }
+  ]
+}
