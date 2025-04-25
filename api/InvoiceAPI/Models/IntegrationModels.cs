@@ -16,6 +16,7 @@ public class PurchaseOrder
     public string? SupplierName { get; set; }
     public string? Status { get; set; }
     public DateTime? OrderDate { get; set; }
+    public bool AutoCore { get; set; }
     public decimal Total { get; set; }
     public List<PurchaseOrderItem>? Items { get; set; }
 }

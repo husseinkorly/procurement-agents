@@ -21,6 +21,9 @@ public class PurchaseOrder
 
     [JsonPropertyName("shippingAddress")]
     public string? ShippingAddress { get; set; }
+    
+    [JsonPropertyName("autoCore")]
+    public bool AutoCore { get; set; }
 
     [JsonPropertyName("lineItems")]
     public List<POLineItem>? LineItems { get; set; }

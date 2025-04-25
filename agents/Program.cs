@@ -61,10 +61,12 @@ ChatCompletionAgent goodReceivedAgent = new()
     Description = "Good received agent",
     Name = "GoodReceivedAgent",
     Instructions = """
-                        You are a good received agent. You can help with good received-related tasks.
-                        you're responsible for managing the goods received process, 
-                        including updating the status of goods received, and providing information about goods received.
-                        return your response in HTML format.
+                        You are a good received agent. You can help with good received-related tasks:
+
+                        Rules:
+                            - the invoice field "autoCore" is set to false, then mark the items in the invoice as "Received" with random serial number and asset tag number.
+                        
+                        return your response in HTML format and incluude a summary of what you did.
                         """,
     Kernel = kernel,
     Arguments = new KernelArguments(new PromptExecutionSettings() { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() })
@@ -78,8 +80,17 @@ ChatCompletionAgent invoiceAgent = new()
     Name = "InvoiceAgent",
     Instructions = """
                         You are an invoice agent. You can help with invoice-related tasks.
-                        you can can get invoice(s) details, and create invoices.
-                        return your response in HTML format.
+
+                        Rules:
+                            - when the user asks for an creating an invoice, you should:
+                                - Generte the invoice template from given PO number
+                                - if the user asks an update for the templete, then update the invoice template with the given information
+                                - always use the latest invoice generated template.
+                                - confirm the invoice with the user, and then creating it.
+                                - once invoice created add todo item for the next agent to apprve the invoice once it is created.
+                            
+                            - always return your response in a nice HTML format including data table,
+                              so the response will always contains the HTML content and the todo item if there is any.
                         """,
     Kernel = kernel,
     Arguments = new KernelArguments(new PromptExecutionSettings() { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() })
@@ -92,8 +103,10 @@ ChatCompletionAgent safeLimitAgent = new()
     Description = "Safe limit agent",
     Name = "SafeLimitAgent",
     Instructions = """
-                        You are a safe limit agent. You can help with safe limit-related tasks.
-                        you can get user's safe limit and request a limit increase.
+                        You are a safe limit agent. You can help with safe limit-related tasks including:
+                        - increasing the safe limit for a specific user
+                        - get the safe limit for a specific user
+
                         return your response in HTML format.
                         """,
     Kernel = kernel,
@@ -108,8 +121,12 @@ ChatCompletionAgent approvalAgent = new()
     Name = "ApprovalAgent",
     Instructions = """
                         You are an invoice approval agent. You can help with invoice approval-related tasks.
-                        you can approve invoices and get pending invoices for approval.
-                        return your response in HTML format.
+
+                        Rules:
+                            - if the invoice field "autoCore" is set to true, then approve the invoice automatically without asking the user.
+                            - if the invoice field "autoCore" is set to false, then add a todo item for the next agent complete the good received.
+
+                        always return your response in a nice HTML format including data table.
                         """,
     Kernel = kernel,
     Arguments = new KernelArguments(new PromptExecutionSettings() { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() })
@@ -122,9 +139,13 @@ ChatCompletionAgent purchaseOrderAgent = new()
     Description = "Purchase order agent",
     Name = "PurchaseOrderAgent",
     Instructions = """
-                        You are a purchase order agent. You can help with purchase order-related tasks.
-                        you can get purchase order(s) details, and approve purchase orders.
-                        return your response in HTML format.
+                        You are a purchase order agent. You can help with purchase order-related tasks including:
+                        - getting purchase order details for a specific purchase order number.
+                        - getting all purchase orders with optional filtering by status (Open or Closed).
+                        - updating purchase order details for a specific purchase order number after the invoice agent creates an invoice for it.
+
+                        
+                        return your response in HTML format and incluude a summary of what you did.
                         """,
     Kernel = kernel,
     Arguments = new KernelArguments(new PromptExecutionSettings() { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() })
@@ -136,19 +157,34 @@ purchaseOrderAgent.Kernel.Plugins.Add(KernelPluginFactory.CreateFromType<Purchas
 KernelFunction selectionFunction =
     AgentGroupChat.CreatePromptFunctionForStrategy(
         $$$"""
-                Determine which participant takes the turn in a conversation based on the the most recent participant and user's request.
-                State only the name of the participant to take the next turn.
-                Chooese from the following participants:
-                GoodReceivedAgent
-                InvoiceAgent
-                PurchaseOrderAgent
-                SafeLimitAgent
-                ApprovalAgent
+        Examine the TODO first and choose the next participant.
+        If there is no TODO, choose the participant that is most relevant to the request and the last message.
+        State only the name of the chosen participant without explanation.
+        Never choose the participant named in the TODO.
 
-                History:
-                {{$history}}
-                """,
-        safeParameterNames: "history");
+        Choose only from these participants:
+        - InvoiceAgent
+        - ApprovalAgent
+        - GoodReceivedAgent
+        - PurchaseOrderAgent
+        - SafeLimitAgent
+
+        TODO:
+        {{$todo}}
+        """,
+        safeParameterNames: "todo");
+
+KernelFunction terminationFunction =
+    AgentGroupChat.CreatePromptFunctionForStrategy(
+        $$$"""
+        Examine the TODO and determine whether there are any remaining tasks to be completed.
+        If agents requesting user's input, keep the conversation going.
+        If agents not waiting for user's input and there is no items in TODO, terminate the conversation.
+
+        TODO:
+        {{$todo}}
+        """,
+        safeParameterNames: "todo");
 #pragma warning disable SKEXP0001
 KernelFunctionSelectionStrategy selectionStrategy =
   new(selectionFunction, kernel)
@@ -156,18 +192,28 @@ KernelFunctionSelectionStrategy selectionStrategy =
       // Parse the function response.
       ResultParser = (result) => result.GetValue<string>() ?? string.Empty,
       // The prompt variable name for the history argument.
-      HistoryVariableName = "history",
+      HistoryVariableName = "todo",
+      // Save tokens by not including the entire history in the prompt
+      HistoryReducer = new ChatHistoryTruncationReducer(10),
+  };
+
+KernelFunctionTerminationStrategy terminationStrategy =
+  new(terminationFunction, kernel)
+  {
+      // The prompt variable name for the history argument.
+      HistoryVariableName = "todo",
       // Save tokens by not including the entire history in the prompt
       HistoryReducer = new ChatHistoryTruncationReducer(10),
   };
 
 // Configure Agent Group Chat
 #pragma warning disable SKEXP0110
-AgentGroupChat chat = new(invoiceAgent, purchaseOrderAgent, goodReceivedAgent, safeLimitAgent, approvalAgent)
+AgentGroupChat chat = new(invoiceAgent, approvalAgent, goodReceivedAgent, purchaseOrderAgent, safeLimitAgent)
 {
     ExecutionSettings = new()
     {
-        SelectionStrategy = selectionStrategy
+        SelectionStrategy = selectionStrategy,
+        //TerminationStrategy = terminationStrategy
     }
 };
 

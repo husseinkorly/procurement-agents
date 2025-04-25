@@ -39,6 +39,30 @@
       "Action": "Rejected",
       "Timestamp": "2025-02-20T16:05:30",
       "Comments": "Services not delivered as specified in contract"
+    },
+    {
+      "Id": "2104f935-3844-4f95-b991-063a2731aa2c",
+      "InvoiceNumber": "INV-20250425-PO-2025-1234",
+      "ApproverName": "JuniorApprover",
+      "Action": "Approved",
+      "Timestamp": "2025-04-25T20:02:15.888154+00:00",
+      "Comments": null
+    },
+    {
+      "Id": "1360c53b-a507-4c96-9165-133c17e69c1f",
+      "InvoiceNumber": "INV-20250425-PO-2025-1234",
+      "ApproverName": "JuniorApprover",
+      "Action": "Approved",
+      "Timestamp": "2025-04-25T20:08:41.5139547+00:00",
+      "Comments": null
+    },
+    {
+      "Id": "206bbecb-d9f7-4119-aa36-3cc94f87dd75",
+      "InvoiceNumber": "INV-20250425-PO-2025-1234",
+      "ApproverName": "JuniorApprover",
+      "Action": "Approved",
+      "Timestamp": "2025-04-25T20:27:49.607896+00:00",
+      "Comments": null
     }
   ]
 }

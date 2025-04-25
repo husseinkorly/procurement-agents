@@ -8,6 +8,7 @@
       "InvoiceDate": "2025-03-15",
       "DueDate": "2025-04-15",
       "Approver": "Sarah Johnson",
+      "AutoCore": true,
       "LineItems": [
         {
           "ItemId": "ITEM001",
@@ -39,6 +40,7 @@
       "InvoiceDate": "2025-02-28",
       "DueDate": "2025-03-31",
       "Approver": "Michael Chen",
+      "AutoCore": false,
       "LineItems": [
         {
           "ItemId": "TS001",
@@ -70,6 +72,7 @@
       "InvoiceDate": "2025-03-25",
       "DueDate": "2025-04-25",
       "Approver": "David Rodriguez",
+      "AutoCore": true,
       "LineItems": [
         {
           "ItemId": "SVC001",
@@ -101,6 +104,7 @@
       "InvoiceDate": "2025-03-30",
       "DueDate": "2025-04-30",
       "Approver": "Emily Wilson",
+      "AutoCore": false,
       "LineItems": [
         {
           "ItemId": "CAT001",
@@ -132,6 +136,7 @@
       "InvoiceDate": "2025-02-15",
       "DueDate": "2025-03-17",
       "Approver": "Sarah Johnson",
+      "AutoCore": true,
       "LineItems": [
         {
           "ItemId": "CONS001",
@@ -163,6 +168,7 @@
       "InvoiceDate": "2025-04-23",
       "DueDate": "2025-05-23",
       "Approver": "SeniorApprover",
+      "AutoCore": false,
       "LineItems": [
         {
           "ItemId": "SW001",
@@ -194,6 +200,7 @@
       "InvoiceDate": "2025-04-24",
       "DueDate": "2025-05-24",
       "Approver": "JuniorApprover",
+      "AutoCore": true,
       "LineItems": [
         {
           "ItemId": "ITEM001",
@@ -225,6 +232,7 @@
       "InvoiceDate": "2025-04-24",
       "DueDate": "2025-05-24",
       "Approver": "JuniorApprover",
+      "AutoCore": false,
       "LineItems": [
         {
           "ItemId": "CAT001",
@@ -256,6 +264,7 @@
       "InvoiceDate": "2025-04-24",
       "DueDate": "2025-05-24",
       "Approver": "JuniorApprover",
+      "AutoCore": true,
       "LineItems": [
         {
           "ItemId": "CONS001",
@@ -278,6 +287,38 @@
       "Total": 9180,
       "Currency": "USD",
       "Status": "Pending Approval"
+    },
+    {
+      "InvoiceNumber": "INV-20250425-PO-2025-1234",
+      "PurchaseOrderNumber": "PO-2025-1234",
+      "SupplierName": "Office Supplies Inc.",
+      "SupplierId": "SUP001",
+      "InvoiceDate": "2025-04-24",
+      "DueDate": "2025-05-25",
+      "Approver": "JuniorApprover",
+      "AutoCore": true,
+      "LineItems": [
+        {
+          "ItemId": "ITEM001",
+          "Description": "Premium Paper (Letter Size, 500 sheets)",
+          "Quantity": 10,
+          "UnitPrice": 8.99,
+          "TotalPrice": 89.9
+        },
+        {
+          "ItemId": "ITEM002",
+          "Description": "Ink Cartridges (Black)",
+          "Quantity": 5,
+          "UnitPrice": 24.99,
+          "TotalPrice": 124.95
+        }
+      ],
+      "Subtotal": 214.85,
+      "Tax": 17.19,
+      "Shipping": 12.5,
+      "Total": 244.54,
+      "Currency": "USD",
+      "Status": "Approved"
     }
   ]
 }

@@ -18,6 +18,7 @@ public class PurchaseOrder
     public string? OrderDate { get; set; }
     public string? ExpectedDeliveryDate { get; set; }
     public string? ShippingAddress { get; set; }
+    public bool AutoCore { get; set; }
     public List<PurchaseOrderLineItem> LineItems { get; set; } = [];
     public decimal Subtotal { get; set; }
     public decimal Tax { get; set; }

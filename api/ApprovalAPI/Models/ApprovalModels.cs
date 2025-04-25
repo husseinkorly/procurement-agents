@@ -31,6 +31,7 @@ public class Invoice
     public string? InvoiceDate { get; set; }
     public string? DueDate { get; set; }
     public string? Approver { get; set; }
+    public bool AutoCore { get; set; }
     public List<InvoiceLineItem> LineItems { get; set; } = [];
     public decimal Subtotal { get; set; }
     public decimal Tax { get; set; }
@@ -56,6 +57,7 @@ public class PurchaseOrder
     public string? SupplierId { get; set; }
     public string? Status { get; set; }
     public DateTime? OrderDate { get; set; }
+    public bool AutoCore { get; set; }
     public decimal Total { get; set; }
     public List<PurchaseOrderItem>? Items { get; set; }
 }

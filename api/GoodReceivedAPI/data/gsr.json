@@ -57,12 +57,12 @@
       "ReceivedDate": "2025-03-28"
     },
     {
-      "SerialNumber": "SN44444",
-      "AssetTagNumber": "AT-55555",
-      "Status": "Not Received",
+      "SerialNumber": "N/A",
+      "AssetTagNumber": "N/A",
+      "Status": "Received",
       "PurchaseOrderNumber": "PO-2025-3289",
       "ItemId": "CAT002",
-      "ReceivedDate": ""
+      "ReceivedDate": "2025-04-25"
     },
     {
       "SerialNumber": "SN55555",

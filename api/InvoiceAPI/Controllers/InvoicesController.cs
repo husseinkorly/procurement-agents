@@ -80,9 +80,9 @@ public class InvoicesController : ControllerBase
             _logger.LogInformation("Updating invoice status: {InvoiceNumber} to {Status} by {UpdatedBy}", 
                 invoiceNumber, request.Status, request.UpdatedBy);
             
-            if (request == null || string.IsNullOrEmpty(request.Status))
+            if (request == null || string.IsNullOrEmpty(request.Status) || string.IsNullOrEmpty(request.UpdatedBy))
             {
-                return BadRequest("Status is required");
+                return BadRequest("Status and UpdatedBy are required");
             }
             
             // Get the invoice details
@@ -204,24 +204,6 @@ public class InvoicesController : ControllerBase
         {
             _logger.LogError(ex, "Error creating invoice for PO {PONumber}", invoice.PurchaseOrderNumber);
             return StatusCode(500, $"An error occurred while creating the invoice: {ex.Message}");
-        }
-    }
-
-    [HttpGet("pending")]
-    public ActionResult<List<Invoice>> GetPendingInvoices()
-    {
-        try
-        {
-            _logger.LogInformation("Getting pending invoices");
-            
-            var pendingInvoices = _invoiceService.GetInvoicesByStatus("Pending Approval");
-            
-            return Ok(pendingInvoices);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving pending invoices");
-            return StatusCode(500, "An error occurred while retrieving pending invoices");
         }
     }
 }

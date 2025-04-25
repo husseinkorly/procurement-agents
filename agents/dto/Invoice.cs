@@ -24,6 +24,9 @@ public class Invoice
 
     [JsonPropertyName("approver")]
     public string? Approver { get; set; }
+    
+    [JsonPropertyName("autoCore")]
+    public bool AutoCore { get; set; }
 
     [JsonPropertyName("lineItems")]
     public List<LineItem>? LineItems { get; set; }

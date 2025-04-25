@@ -7,6 +7,7 @@
       "orderDate": "2025-02-15",
       "expectedDeliveryDate": "2025-03-15",
       "shippingAddress": "123 Corporate Plaza, Suite 500, New York, NY 10001",
+      "autoCore": true,
       "lineItems": [
         {
           "itemId": "ITEM001",
@@ -39,6 +40,7 @@
       "orderDate": "2025-02-01",
       "expectedDeliveryDate": "2025-02-28",
       "shippingAddress": "456 Business Center, Austin, TX 78701",
+      "autoCore": true,
       "lineItems": [
         {
           "itemId": "TS001",
@@ -71,6 +73,7 @@
       "orderDate": "2025-03-01",
       "expectedDeliveryDate": "2025-03-25",
       "shippingAddress": "789 Corporate Park, Chicago, IL 60601",
+      "autoCore": true,
       "lineItems": [
         {
           "itemId": "SVC001",
@@ -103,6 +106,7 @@
       "orderDate": "2025-03-10",
       "expectedDeliveryDate": "2025-03-30",
       "shippingAddress": "101 Executive Tower, Seattle, WA 98101",
+      "autoCore": true,
       "lineItems": [
         {
           "itemId": "CAT001",
@@ -135,6 +139,7 @@
       "orderDate": "2025-01-15",
       "expectedDeliveryDate": "2025-02-15",
       "shippingAddress": "555 Strategy Boulevard, San Francisco, CA 94105",
+      "autoCore": true,
       "lineItems": [
         {
           "itemId": "CONS001",
@@ -167,6 +172,7 @@
       "orderDate": "2025-03-20",
       "expectedDeliveryDate": "2025-04-20",
       "shippingAddress": "222 Corporate Plaza, Suite 500, New York, NY 10001",
+      "autoCore": true,
       "lineItems": [
         {
           "itemId": "FRN001",
@@ -199,6 +205,7 @@
       "orderDate": "2025-04-01",
       "expectedDeliveryDate": "2025-05-01",
       "shippingAddress": "888 Tech Avenue, Austin, TX 78701",
+      "autoCore": true,
       "lineItems": [
         {
           "itemId": "SW001",

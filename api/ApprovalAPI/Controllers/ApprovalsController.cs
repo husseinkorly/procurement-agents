@@ -64,21 +64,4 @@ public class ApprovalsController : ControllerBase
             return StatusCode(500, "An error occurred while retrieving approval history");
         }
     }
-    
-    [HttpGet("{invoiceNumber}/history")]
-    public async Task<ActionResult<List<ApprovalHistory>>> GetInvoiceApprovalHistory(string invoiceNumber)
-    {
-        try
-        {
-            _logger.LogInformation("Getting approval history for specific invoice: {InvoiceNumber}", invoiceNumber);
-            
-            var history = await _approvalService.GetApprovalHistoryAsync(invoiceNumber);
-            return Ok(history);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving approval history for invoice {InvoiceNumber}", invoiceNumber);
-            return StatusCode(500, "An error occurred while retrieving approval history");
-        }
-    }
 }

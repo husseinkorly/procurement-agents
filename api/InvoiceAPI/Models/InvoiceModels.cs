@@ -18,6 +18,7 @@ public class Invoice
     public string? InvoiceDate { get; set; }
     public string? DueDate { get; set; }
     public string? Approver { get; set; }
+    public bool AutoCore { get; set; }
     public List<InvoiceLineItem> LineItems { get; set; } = [];
     public decimal Subtotal { get; set; }
     public decimal Tax { get; set; }

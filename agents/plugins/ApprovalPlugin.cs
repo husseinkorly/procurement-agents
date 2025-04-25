@@ -45,7 +45,7 @@ public class ApprovalPlugin
             {
                 var responseContent = await response.Content.ReadAsStringAsync();
                 var approvalResponse = JsonSerializer.Deserialize<ApprovalResponse>(responseContent, _jsonOptions);
-                
+
                 if (approvalResponse != null && approvalResponse.Success)
                 {
                     return $"Invoice #{invoiceNumber} has been successfully approved by {approverName}.";
@@ -54,7 +54,7 @@ public class ApprovalPlugin
                 {
                     return $"Could not approve invoice: {approvalResponse.Message}";
                 }
-                
+
                 return $"Invoice #{invoiceNumber} approval request was submitted, but the result is unclear.";
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
@@ -65,12 +65,12 @@ public class ApprovalPlugin
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
                 var errorResponse = JsonSerializer.Deserialize<ApprovalResponse>(errorContent, _jsonOptions);
-                
+
                 if (errorResponse != null && !string.IsNullOrEmpty(errorResponse.Message))
                 {
                     return errorResponse.Message;
                 }
-                
+
                 return $"Error approving invoice: Bad request - {errorContent}";
             }
             else
@@ -92,15 +92,13 @@ public class ApprovalPlugin
     {
         try
         {
-            string url;
-            
-            if (string.IsNullOrEmpty(invoiceNumber))
+            // Use a single URL pattern with optional query parameter
+            string url = $"{_baseUrl}/api/Approvals/history";
+
+            // Add invoice number as query parameter if provided
+            if (!string.IsNullOrEmpty(invoiceNumber))
             {
-                url = $"{_baseUrl}/api/Approvals/history";
-            }
-            else
-            {
-                url = $"{_baseUrl}/api/Approvals/{invoiceNumber}/history";
+                url += $"?invoiceNumber={invoiceNumber}";
             }
 
             var response = await _httpClient.GetAsync(url);
@@ -112,8 +110,8 @@ public class ApprovalPlugin
 
                 if (historyItems == null || !historyItems.Any())
                 {
-                    return string.IsNullOrEmpty(invoiceNumber) 
-                        ? "No approval history found for any invoices." 
+                    return string.IsNullOrEmpty(invoiceNumber)
+                        ? "No approval history found for any invoices."
                         : $"No approval history found for invoice #{invoiceNumber}.";
                 }
 
@@ -127,12 +125,12 @@ public class ApprovalPlugin
                     result += $"Action: {item.Action}\n";
                     result += $"By: {item.ApproverName}\n";
                     result += $"Date: {item.Timestamp:yyyy-MM-dd HH:mm:ss}\n";
-                    
+
                     if (!string.IsNullOrEmpty(item.Comments))
                     {
                         result += $"Comments: {item.Comments}\n";
                     }
-                    
+
                     result += "\n";
                 }
 
@@ -146,52 +144,6 @@ public class ApprovalPlugin
         catch (Exception ex)
         {
             return $"Error connecting to Approval API: {ex.Message}";
-        }
-    }
-
-    [KernelFunction("list_pending_approvals")]
-    [Description("List all invoices that are pending approval")]
-    public async Task<string> ListPendingApprovalsAsync()
-    {
-        try
-        {
-            // This actually calls the InvoiceAPI's pending endpoint since that information is stored there
-            string invoiceApiUrl = "http://localhost:5136"; // InvoiceAPI port
-            string url = $"{invoiceApiUrl}/api/Invoices/pending";
-
-            var response = await _httpClient.GetAsync(url);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var content = await response.Content.ReadAsStringAsync();
-                var pendingInvoices = JsonSerializer.Deserialize<List<Invoice>>(content, _jsonOptions);
-
-                if (pendingInvoices == null || pendingInvoices.Count == 0)
-                {
-                    return "There are no invoices pending approval.";
-                }
-
-                string result = $"Found {pendingInvoices.Count} invoices pending approval:\n\n";
-
-                foreach (var invoice in pendingInvoices)
-                {
-                    result += $"Invoice #{invoice.InvoiceNumber}\n";
-                    result += $"Supplier: {invoice.SupplierName}\n";
-                    result += $"Amount: ${invoice.Total:F2}\n";
-                    result += $"Due date: {invoice.DueDate}\n";
-                    result += $"Authorized Approver: {invoice.Approver}\n\n";
-                }
-
-                return result;
-            }
-            else
-            {
-                return $"Error retrieving pending invoices: {response.StatusCode} - {await response.Content.ReadAsStringAsync()}";
-            }
-        }
-        catch (Exception ex)
-        {
-            return $"Error connecting to Invoice API: {ex.Message}";
         }
     }
 }

@@ -4,6 +4,29 @@ import { Button } from '@/components/ui/button';
 import copilotIcon from '../assets/Copilot_Icon.png';
 import { Loader2 } from 'lucide-react';
 
+// Add CSS for table styling
+const tableStyles = `
+  .table-container table {
+    border-collapse: separate;
+    border-spacing: 10px 4px;
+    width: 100%;
+    margin: 10px 0;
+    font-size: 14px;
+  }
+  
+  .table-container th {
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    font-weight: 600;
+  }
+  
+  .table-container td {
+    padding: 8px;
+    min-width: 80px;
+  }
+`;
+
 type Message = {
   content: string;
   isFromUser: boolean;
@@ -103,6 +126,9 @@ export default function Home() {
 
   return (
     <div className='flex flex-col h-screen bg-gradient-to-b from-gray-100 to-orange-100 text-black'>
+      {/* Add style tag for table styling */}
+      <style dangerouslySetInnerHTML={{ __html: tableStyles }} />
+      
       {/* Title Section */}
       <header className='flex justify-center pt-16 pb-8'>
         <h1 className='text-2xl font-bold text-gray-800 font-["Segoe UI"] max-w-xl text-center'>

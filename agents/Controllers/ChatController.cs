@@ -1,3 +1,4 @@
+using agents.dto;
 using agents.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,14 +37,4 @@ public class ChatController : ControllerBase
             return StatusCode(500, "An error occurred while processing your request");
         }
     }
-}
-
-public class PromptRequest
-{
-    public string Prompt { get; set; } = string.Empty;
-}
-
-public class PromptResponse
-{
-    public List<MessageResponse> Messages { get; set; } = new();
 }
