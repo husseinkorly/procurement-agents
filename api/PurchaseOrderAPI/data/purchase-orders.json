@@ -124,7 +124,7 @@
       "shipping": 25.00,
       "total": 1087.75,
       "currency": "USD",
-      "status": "Closed",
+      "status": "Open",
       "requestorName": "Emma Wilson",
       "approvalDate": "2025-03-15"
     },
@@ -156,7 +156,7 @@
       "shipping": 0,
       "total": 9180.00,
       "currency": "USD",
-      "status": "Closed",
+      "status": "Open",
       "requestorName": "David Rodriguez",
       "approvalDate": "2025-01-20"
     },

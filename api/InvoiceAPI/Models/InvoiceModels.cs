@@ -36,3 +36,9 @@ public class ApprovalRequest
 {
     public string? ApproverName { get; set; }
 }
+
+public class StatusUpdateRequest
+{
+    public string? Status { get; set; }
+    public string? UpdatedBy { get; set; }
+}

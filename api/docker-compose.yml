@@ -57,6 +57,20 @@ services:
     networks:
       - sk-network
 
+  approvalapi:
+    build:
+      context: ./ApprovalAPI
+      dockerfile: Dockerfile
+    ports:
+      - "5137:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DataFilePath__ApprovalHistory=/app/data/approval_history.json
+    volumes:
+      - ./ApprovalAPI/data:/app/data
+    networks:
+      - sk-network
+
 networks:
   sk-network:
     driver: bridge

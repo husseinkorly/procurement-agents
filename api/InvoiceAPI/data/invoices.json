@@ -29,7 +29,7 @@
       "Shipping": 12.5,
       "Total": 244.54,
       "Currency": "USD",
-      "Status": "Pending Approval"
+      "Status": "Approved"
     },
     {
       "InvoiceNumber": "INV-2025-0002",
@@ -154,6 +154,130 @@
       "Total": 9180,
       "Currency": "USD",
       "Status": "Rejected"
+    },
+    {
+      "InvoiceNumber": "INV-20250423-PO-2025-6249",
+      "PurchaseOrderNumber": "PO-2025-6249",
+      "SupplierName": "IT Solutions Provider",
+      "SupplierId": "SUP007",
+      "InvoiceDate": "2025-04-23",
+      "DueDate": "2025-05-23",
+      "Approver": "SeniorApprover",
+      "LineItems": [
+        {
+          "ItemId": "SW001",
+          "Description": "Enterprise Software License (Annual)",
+          "Quantity": 50,
+          "UnitPrice": 120,
+          "TotalPrice": 6000
+        },
+        {
+          "ItemId": "HW001",
+          "Description": "Server Hardware - Rack Mount",
+          "Quantity": 2,
+          "UnitPrice": 2500,
+          "TotalPrice": 5000
+        }
+      ],
+      "Subtotal": 11000,
+      "Tax": 880,
+      "Shipping": 0,
+      "Total": 11880,
+      "Currency": "USD",
+      "Status": "Pending Approval"
+    },
+    {
+      "InvoiceNumber": "INV-20250424-PO-2025-1234",
+      "PurchaseOrderNumber": "PO-2025-1234",
+      "SupplierName": "Office Supplies Inc.",
+      "SupplierId": "SUP001",
+      "InvoiceDate": "2025-04-24",
+      "DueDate": "2025-05-24",
+      "Approver": "JuniorApprover",
+      "LineItems": [
+        {
+          "ItemId": "ITEM001",
+          "Description": "Premium Paper (Letter Size, 500 sheets)",
+          "Quantity": 10,
+          "UnitPrice": 8.99,
+          "TotalPrice": 89.9
+        },
+        {
+          "ItemId": "ITEM002",
+          "Description": "Ink Cartridges (Black)",
+          "Quantity": 5,
+          "UnitPrice": 24.99,
+          "TotalPrice": 124.95
+        }
+      ],
+      "Subtotal": 214.85,
+      "Tax": 17.19,
+      "Shipping": 12.5,
+      "Total": 244.54,
+      "Currency": "USD",
+      "Status": "Pending Approval"
+    },
+    {
+      "InvoiceNumber": "INV-20250424-PO-2025-3289",
+      "PurchaseOrderNumber": "PO-2025-3289",
+      "SupplierName": "Catering Express",
+      "SupplierId": "SUP004",
+      "InvoiceDate": "2025-04-24",
+      "DueDate": "2025-05-24",
+      "Approver": "JuniorApprover",
+      "LineItems": [
+        {
+          "ItemId": "CAT001",
+          "Description": "Executive Lunch Meeting (25 people)",
+          "Quantity": 1,
+          "UnitPrice": 625,
+          "TotalPrice": 625
+        },
+        {
+          "ItemId": "CAT002",
+          "Description": "Coffee and Refreshments Service",
+          "Quantity": 2,
+          "UnitPrice": 175,
+          "TotalPrice": 350
+        }
+      ],
+      "Subtotal": 975,
+      "Tax": 87.75,
+      "Shipping": 25,
+      "Total": 1087.75,
+      "Currency": "USD",
+      "Status": "Pending Approval"
+    },
+    {
+      "InvoiceNumber": "INV-20250424-PO-2025-4002",
+      "PurchaseOrderNumber": "PO-2025-4002",
+      "SupplierName": "Consulting Partners",
+      "SupplierId": "SUP005",
+      "InvoiceDate": "2025-04-24",
+      "DueDate": "2025-05-24",
+      "Approver": "JuniorApprover",
+      "LineItems": [
+        {
+          "ItemId": "CONS001",
+          "Description": "Strategic Planning Workshop",
+          "Quantity": 1,
+          "UnitPrice": 5000,
+          "TotalPrice": 5000
+        },
+        {
+          "ItemId": "CONS002",
+          "Description": "Market Analysis Report",
+          "Quantity": 1,
+          "UnitPrice": 3500,
+          "TotalPrice": 3500
+        }
+      ],
+      "Subtotal": 8500,
+      "Tax": 680,
+      "Shipping": 0,
+      "Total": 9180,
+      "Currency": "USD",
+      "Status": "Pending Approval"
     }
   ]
 }

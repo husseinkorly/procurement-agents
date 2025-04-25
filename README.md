@@ -2,11 +2,14 @@
 
 This project implements a procurement process management system with intelligent agents handling different aspects of the procurement workflow. The system consists of multiple microservices and an agent-based interface for managing purchase orders, invoices, goods received, and approval workflows.
 
+<img src="./imgs/main_UI_01.png" alt="Financial Procurement System UI" width="600" />
+
 ## Project Structure
 
-The project is divided into two main parts:
+The project is divided into three main parts:
 1. **Agents** - A .NET application using Semantic Kernel with three specialized AI agents
 2. **API Services** - Four independent microservices that manage different aspects of the procurement process
+3. **UI** - A modern web interface for interacting with the procurement system
 
 ### Microservices Architecture
 - **InvoiceAPI** - Manages invoice data and approval workflows
@@ -43,6 +46,25 @@ This will start all four microservices with the following endpoints:
 - Purchase Order API: http://localhost:5294
 - Safe Limit API: http://localhost:5310
 
+### Running the UI Application
+
+1. Navigate to the UI directory:
+```
+cd ui
+```
+
+2. Install dependencies:
+```
+npm install
+```
+
+3. Start the development server:
+```
+npm run dev
+```
+
+4. Access the UI in your browser at: http://localhost:3000
+
 ### Running the Agents Application
 
 The agents application uses Semantic Kernel and Azure OpenAI to provide an intelligent interface for interacting with the procurement system.
@@ -66,15 +88,18 @@ dotnet run
 
 ## Using the System
 
-The system provides an intelligent agent interface that can:
+The system provides both a web UI and an intelligent agent interface that can:
 
 1. **View and manage Purchase Orders**
    - Get details of specific purchase orders
    - Update purchase order statuses
    - List purchase orders filtered by status
+   - Create new purchase orders with automated approvals
 
 2. **Process Invoices**
    - View invoice details
+   - Create new invoices with automated number generation
+   - Create multiple invoices for the same purchase order
    - Approve invoices (with authorization verification)
    - List pending invoices
 
@@ -118,6 +143,8 @@ InvoiceAgent>>> Invoice #INV-2025-0001 has been successfully approved by Sarah J
 - GET /api/Invoices/{invoiceNumber} - Get invoice by number
 - GET /api/Invoices/pending - Get pending invoices
 - PUT /api/Invoices/{invoiceNumber}/approve - Approve an invoice
+- POST /api/Invoices - Create a new invoice
+- PUT /api/Invoices/{invoiceNumber}/status - Update invoice status
 
 #### Purchase Order API
 - GET /api/PurchaseOrders - Get all purchase orders
@@ -150,3 +177,25 @@ Each microservice manages its own data in JSON files:
 - `/api/SafeLimitAPI/data/safe-limits.json`
 
 The Docker Compose configuration maps these files to volumes for persistence.
+
+### Key Features
+
+1. **Automated Invoice Number Generation**
+   - System automatically generates unique invoice numbers using the format `INV-{date}-{random}` when creating invoices
+   - Format ensures chronological tracking and uniqueness
+   - Users can also provide their own invoice numbers if needed
+
+2. **Multiple Invoices Per Purchase Order**
+   - System supports creating multiple invoices for the same purchase order as long as the PO is open
+   - This enables partial billing and installment payments scenarios
+   - Proper validation prevents invoicing against closed purchase orders
+
+3. **Comprehensive Approval Workflow**
+   - Invoice approval checks for appropriate authorization levels
+   - System verifies that goods have been received before allowing approval
+   - Approval limits are enforced based on user roles and transaction amounts
+
+4. **Modern Web Interface**
+   - Responsive design with modern UI components
+   - Real-time updates and notifications
+   - Filter and search capabilities for all procurement documents

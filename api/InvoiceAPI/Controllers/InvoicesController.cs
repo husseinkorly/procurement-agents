@@ -72,16 +72,17 @@ public class InvoicesController : ControllerBase
         }
     }
 
-    [HttpPut("{invoiceNumber}/approve")]
-    public async Task<ActionResult<Invoice>> ApproveInvoice(string invoiceNumber, [FromBody] ApprovalRequest request)
+    [HttpPut("{invoiceNumber}/status")]
+    public async Task<ActionResult<Invoice>> UpdateInvoiceStatus(string invoiceNumber, [FromBody] StatusUpdateRequest request)
     {
         try
         {
-            _logger.LogInformation("Approving invoice: {InvoiceNumber}", invoiceNumber);
+            _logger.LogInformation("Updating invoice status: {InvoiceNumber} to {Status} by {UpdatedBy}", 
+                invoiceNumber, request.Status, request.UpdatedBy);
             
-            if (request == null || string.IsNullOrEmpty(request.ApproverName))
+            if (request == null || string.IsNullOrEmpty(request.Status))
             {
-                return BadRequest("Approver name is required");
+                return BadRequest("Status is required");
             }
             
             // Get the invoice details
@@ -92,118 +93,9 @@ public class InvoicesController : ControllerBase
                 return NotFound($"Invoice {invoiceNumber} not found");
             }
 
-            // Verify that the approver name matches
-            if (!string.Equals(invoice.Approver, request.ApproverName, StringComparison.OrdinalIgnoreCase))
-            {
-                return BadRequest($"Only {invoice.Approver} is authorized to approve this invoice");
-            }
-
-            // Check if invoice is already approved
-            if (invoice.Status.Equals("Approved", StringComparison.OrdinalIgnoreCase))
-            {
-                return BadRequest($"Invoice {invoiceNumber} is already approved");
-            }
-
-            // Check if invoice is in pending approval status
-            if (!invoice.Status.Equals("Pending Approval", StringComparison.OrdinalIgnoreCase))
-            {
-                return BadRequest($"Invoice {invoiceNumber} is not in 'Pending Approval' status");
-            }
-
-            // Check if the approver has sufficient safe limit
-            string safeLimitApiUrl = _configuration["ApiEndpoints:SafeLimitApi"] ?? "http://safelimitapi:8080";
-            var checkUrl = $"{safeLimitApiUrl}/api/SafeLimits/check";
-            
-            try
-            {
-                var checkRequest = new 
-                {
-                    UserName = request.ApproverName,
-                    InvoiceAmount = invoice.Total
-                };
-                
-                var checkResponse = await _httpClient.PostAsJsonAsync(checkUrl, checkRequest);
-                
-                if (!checkResponse.IsSuccessStatusCode)
-                {
-                    return BadRequest($"Failed to verify approval limit: {checkResponse.StatusCode}");
-                }
-
-                var checkContent = await checkResponse.Content.ReadAsStringAsync();
-                var limitResult = JsonSerializer.Deserialize<ApprovalLimitCheckResult>(checkContent, _jsonOptions);
-
-                if (limitResult != null && !limitResult.CanApprove)
-                {
-                    return BadRequest($"Approval limit exceeded. {request.ApproverName} is not authorized to approve invoices of ${invoice.Total}");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error checking safe limit for user {UserName}", request.ApproverName);
-                return StatusCode(500, $"Error checking approval limit: {ex.Message}");
-            }
-
-            // Validate Purchase Order status (should not be closed)
-            string poApiUrl = _configuration["ApiEndpoints:PurchaseOrderApi"] ?? "http://localhost:5294";
-            var poUrl = $"{poApiUrl}/api/PurchaseOrders/{invoice.PurchaseOrderNumber}";
-            
-            try
-            {
-                var poResponse = await _httpClient.GetAsync(poUrl);
-                if (!poResponse.IsSuccessStatusCode)
-                {
-                    return BadRequest($"Unable to validate purchase order {invoice.PurchaseOrderNumber}");
-                }
-
-                var poContent = await poResponse.Content.ReadAsStringAsync();
-                var purchaseOrder = JsonSerializer.Deserialize<PurchaseOrder>(poContent, _jsonOptions);
-
-                if (purchaseOrder != null && purchaseOrder.Status.Equals("Closed", StringComparison.OrdinalIgnoreCase))
-                {
-                    return BadRequest($"Cannot approve invoice {invoiceNumber} because purchase order {invoice.PurchaseOrderNumber} is closed");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error validating purchase order {PONumber}", invoice.PurchaseOrderNumber);
-                return StatusCode(500, $"Error validating purchase order: {ex.Message}");
-            }
-
-            // Validate that all goods for the invoice items are received
-            string gsrApiUrl = _configuration["ApiEndpoints:GoodsReceivedApi"] ?? "http://localhost:5284";
-            
-            foreach (var item in invoice.LineItems)
-            {
-                var gsrUrl = $"{gsrApiUrl}/api/GoodsReceived/po/{invoice.PurchaseOrderNumber}?itemId={item.ItemId}";
-                
-                try
-                {
-                    var gsrResponse = await _httpClient.GetAsync(gsrUrl);
-                    
-                    // If the goods received data is not found or there's an error, reject the approval
-                    if (!gsrResponse.IsSuccessStatusCode)
-                    {
-                        return BadRequest($"Cannot approve invoice {invoiceNumber}. Goods received data for item {item.ItemId} not found.");
-                    }
-
-                    var gsrContent = await gsrResponse.Content.ReadAsStringAsync();
-                    var goodsItems = JsonSerializer.Deserialize<List<GoodsReceivedItem>>(gsrContent, _jsonOptions);
-                    
-                    // Check if any goods for this item are not received
-                    if (goodsItems == null || !goodsItems.Any() || goodsItems.Any(g => g.Status != "Received"))
-                    {
-                        return BadRequest($"Cannot approve invoice {invoiceNumber}. Goods for item {item.ItemId} are not marked as received.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error validating goods received for item {ItemId}", item.ItemId);
-                    return StatusCode(500, $"Error validating goods received: {ex.Message}");
-                }
-            }
-            
-            // All validations passed, approve the invoice
-            var updatedInvoice = await _invoiceService.ApproveInvoiceAsync(invoiceNumber);
+            // Update the status
+            var updatedInvoice = await _invoiceService.UpdateInvoiceStatusAsync(
+                invoiceNumber, request.Status, request.UpdatedBy);
             
             if (updatedInvoice == null)
             {
@@ -214,8 +106,104 @@ public class InvoicesController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error approving invoice {InvoiceNumber}", invoiceNumber);
-            return StatusCode(500, "An error occurred while approving the invoice");
+            _logger.LogError(ex, "Error updating status for invoice {InvoiceNumber}", invoiceNumber);
+            return StatusCode(500, "An error occurred while updating the invoice status");
+        }
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<Invoice>> CreateInvoice([FromBody] Invoice invoice)
+    {
+        try
+        {
+            _logger.LogInformation("Creating new invoice for PO: {PONumber}", invoice.PurchaseOrderNumber);
+            
+            // Validation checks
+            List<string> validationErrors = new List<string>();
+            
+            if (string.IsNullOrEmpty(invoice.PurchaseOrderNumber))
+            {
+                validationErrors.Add("Purchase order number is required");
+            }
+            
+            if (string.IsNullOrEmpty(invoice.SupplierName))
+            {
+                validationErrors.Add("Supplier name is required");
+            }
+            
+            if (string.IsNullOrEmpty(invoice.SupplierId))
+            {
+                validationErrors.Add("Supplier ID is required");
+            }
+            
+            if (invoice.LineItems == null || invoice.LineItems.Count == 0)
+            {
+                validationErrors.Add("At least one line item is required");
+            }
+            
+            if (validationErrors.Count > 0)
+            {
+                return BadRequest(new { Errors = validationErrors });
+            }
+            
+            // Verify that the purchase order exists and is not closed
+            string poApiUrl = _configuration["ApiEndpoints:PurchaseOrderApi"] ?? "http://localhost:5294";
+            var poUrl = $"{poApiUrl}/api/PurchaseOrders/{invoice.PurchaseOrderNumber}";
+            
+            try
+            {
+                var poResponse = await _httpClient.GetAsync(poUrl);
+                if (!poResponse.IsSuccessStatusCode)
+                {
+                    return BadRequest($"Purchase order {invoice.PurchaseOrderNumber} could not be found or validated");
+                }
+
+                var poContent = await poResponse.Content.ReadAsStringAsync();
+                var purchaseOrder = JsonSerializer.Deserialize<PurchaseOrder>(poContent, _jsonOptions);
+
+                if (purchaseOrder?.Status != null && purchaseOrder.Status.Equals("Closed", StringComparison.OrdinalIgnoreCase))
+                {
+                    return BadRequest($"Cannot create invoice because purchase order {invoice.PurchaseOrderNumber} is closed");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error validating purchase order {PONumber}", invoice.PurchaseOrderNumber);
+                return StatusCode(500, $"Error validating purchase order: {ex.Message}");
+            }
+            
+            // Create the invoice
+            try
+            {
+                var createdInvoice = await _invoiceService.CreateInvoiceAsync(invoice);
+                
+                if (createdInvoice == null)
+                {
+                    _logger.LogError("Invoice service returned null when creating invoice");
+                    return StatusCode(500, "Unknown error creating invoice - service returned null");
+                }
+                
+                return CreatedAtAction(nameof(GetInvoice), new { invoiceNumber = createdInvoice.InvoiceNumber }, createdInvoice);
+            }
+            catch (InvalidOperationException ex)
+            {
+                // These are business rule violations (duplicate invoice number, duplicate PO, etc.)
+                _logger.LogWarning(ex, "Business rule violation when creating invoice");
+                
+                // Return the detailed error message from the service
+                return Conflict(new { Message = ex.Message }); // HTTP 409 Conflict
+            }
+            catch (Exception ex)
+            {
+                // Log the detailed exception
+                _logger.LogError(ex, "Unhandled exception in CreateInvoice");
+                return StatusCode(500, $"Failed to create invoice: {ex.Message}");
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating invoice for PO {PONumber}", invoice.PurchaseOrderNumber);
+            return StatusCode(500, $"An error occurred while creating the invoice: {ex.Message}");
         }
     }
 

@@ -9,12 +9,12 @@
       "ReceivedDate": "2025-03-18"
     },
     {
-      "SerialNumber": "",
-      "AssetTagNumber": "",
-      "Status": "Not Received",
+      "SerialNumber": "SN234923847",
+      "AssetTagNumber": "AT234293847",
+      "Status": "Received",
       "PurchaseOrderNumber": "PO-2025-1234",
       "ItemId": "ITEM002",
-      "ReceivedDate": ""
+      "ReceivedDate": "2025-04-22"
     },
     {
       "SerialNumber": "SN24680",
@@ -39,6 +39,78 @@
       "PurchaseOrderNumber": "PO-2025-2157",
       "ItemId": "SVC001",
       "ReceivedDate": "2025-03-27"
+    },
+    {
+      "SerialNumber": "SN22222",
+      "AssetTagNumber": "AT-33333",
+      "Status": "Not Received",
+      "PurchaseOrderNumber": "PO-2025-2157",
+      "ItemId": "SVC002",
+      "ReceivedDate": ""
+    },
+    {
+      "SerialNumber": "SN33333",
+      "AssetTagNumber": "AT-44444",
+      "Status": "Received",
+      "PurchaseOrderNumber": "PO-2025-3289",
+      "ItemId": "CAT001",
+      "ReceivedDate": "2025-03-28"
+    },
+    {
+      "SerialNumber": "SN44444",
+      "AssetTagNumber": "AT-55555",
+      "Status": "Not Received",
+      "PurchaseOrderNumber": "PO-2025-3289",
+      "ItemId": "CAT002",
+      "ReceivedDate": ""
+    },
+    {
+      "SerialNumber": "SN55555",
+      "AssetTagNumber": "AT-66666",
+      "Status": "Received",
+      "PurchaseOrderNumber": "PO-2025-4002",
+      "ItemId": "CONS001",
+      "ReceivedDate": "2025-02-10"
+    },
+    {
+      "SerialNumber": "SN66666",
+      "AssetTagNumber": "AT-77777",
+      "Status": "Not Received",
+      "PurchaseOrderNumber": "PO-2025-4002",
+      "ItemId": "CONS002",
+      "ReceivedDate": ""
+    },
+    {
+      "SerialNumber": "SN77777",
+      "AssetTagNumber": "AT-88888",
+      "Status": "Received",
+      "PurchaseOrderNumber": "PO-2025-5173",
+      "ItemId": "FRN001",
+      "ReceivedDate": "2025-04-20"
+    },
+    {
+      "SerialNumber": "SN88888",
+      "AssetTagNumber": "AT-99999",
+      "Status": "Not Received",
+      "PurchaseOrderNumber": "PO-2025-5173",
+      "ItemId": "FRN002",
+      "ReceivedDate": ""
+    },
+    {
+      "SerialNumber": "SN99999",
+      "AssetTagNumber": "AT-10101",
+      "Status": "Received",
+      "PurchaseOrderNumber": "PO-2025-6249",
+      "ItemId": "SW001",
+      "ReceivedDate": "2025-04-24"
+    },
+    {
+      "SerialNumber": "SN10101",
+      "AssetTagNumber": "AT-12121",
+      "Status": "Not Received",
+      "PurchaseOrderNumber": "PO-2025-6249",
+      "ItemId": "HW001",
+      "ReceivedDate": ""
     }
   ]
 }

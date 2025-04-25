@@ -3,7 +3,7 @@
     {
       "UserId": "user001",
       "UserName": "Sarah Johnson",
-      "ApprovalLimit": 100.00,
+      "ApprovalLimit": 250,
       "Currency": "USD",
       "Role": "Finance Manager"
     },
@@ -27,6 +27,41 @@
       "ApprovalLimit": 7500.00,
       "Currency": "USD",
       "Role": "Procurement Manager"
+    },
+    {
+      "UserId": "user005",
+      "UserName": "John Smith",
+      "ApprovalLimit": 5000.00,
+      "Currency": "USD",
+      "Role": "Operations Manager"
+    },
+    {
+      "UserId": "user006",
+      "UserName": "Linda Brown",
+      "ApprovalLimit": 1000.00,
+      "Currency": "USD",
+      "Role": "HR Manager"
+    },
+    {
+      "UserId": "user007",
+      "UserName": "Robert Davis",
+      "ApprovalLimit": 1500.00,
+      "Currency": "USD",
+      "Role": "IT Manager"
+    },
+    {
+      "UserId": "user008",
+      "UserName": "JuniorApprover",
+      "ApprovalLimit": 2000.00,
+      "Currency": "USD",
+      "Role": "Marketing Manager"
+    },
+    {
+      "UserId": "user009",
+      "UserName": "SeniorApprover",
+      "ApprovalLimit": 15000.00,
+      "Currency": "USD",
+      "Role": "Chief Financial Officer"
     }
   ]
 }

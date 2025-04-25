@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Text.Json;
 using Microsoft.SemanticKernel;
 using agents.dto;
+using System.Text;
 
 namespace agents.plugins;
 
@@ -13,13 +14,14 @@ public class InvoicePlugin
     {
         WriteIndented = true,
         PropertyNameCaseInsensitive = true,
-        PropertyNamingPolicy = null // Don't use camelCase policy to match the mixed-case in the JSON
+        PropertyNamingPolicy = null
     };
-
+    private readonly string _purchaseOrderApiBaseUrl;
     public InvoicePlugin()
     {
         _httpClient = new HttpClient();
         _baseUrl = "http://localhost:5136";
+        _purchaseOrderApiBaseUrl = "http://localhost:5294";
     }
 
     [KernelFunction("get_invoice_details")]
@@ -80,46 +82,6 @@ public class InvoicePlugin
         }
     }
 
-    [KernelFunction("approve_invoice")]
-    [Description("Approve an invoice for payment by providing the invoice number and approver name")]
-    public async Task<string> ApproveInvoiceAsync(
-        [Description("The invoice number to approve")] string invoiceNumber,
-        [Description("The name of the person approving the invoice")] string approverName)
-    {
-        try
-        {
-            string url = $"{_baseUrl}/api/Invoices/{invoiceNumber}/approve";
-
-            // Create approval request with approver name
-            var approvalRequest = new { ApproverName = approverName };
-            var content = new StringContent(
-                JsonSerializer.Serialize(approvalRequest),
-                System.Text.Encoding.UTF8,
-                "application/json");
-
-            var response = await _httpClient.PutAsync(url, content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var responseContent = await response.Content.ReadAsStringAsync();
-                return $"Invoice #{invoiceNumber} has been successfully approved by {approverName}.";
-            }
-            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                return $"Invoice #{invoiceNumber} not found in the database.";
-            }
-            else
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                return $"Error approving invoice: {response.StatusCode} - {errorContent}";
-            }
-        }
-        catch (Exception ex)
-        {
-            return $"Error connecting to Invoice API: {ex.Message}";
-        }
-    }
-
     [KernelFunction("list_pending_invoices")]
     [Description("Get a list of all invoices that are pending approval.")]
     public async Task<string> ListPendingInvoices()
@@ -161,6 +123,142 @@ public class InvoicePlugin
         catch (Exception ex)
         {
             return $"Error connecting to Invoice API: {ex.Message}";
+        }
+    }
+
+    [KernelFunction("create_invoice_for_po")]
+    [Description("Create an invoice for a given purchase order number.")]
+    public async Task<string> CreateInvoiceForPO(
+        [Description("The purchase order number to create an invoice for")] string poNumber)
+    {
+        try
+        {
+            // First, get the purchase order details
+            string poUrl = $"{_purchaseOrderApiBaseUrl}/api/PurchaseOrders/{poNumber}";
+            var poResponse = await _httpClient.GetAsync(poUrl);
+
+            if (!poResponse.IsSuccessStatusCode)
+            {
+                if (poResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return $"Purchase order {poNumber} not found in the database.";
+                }
+                return $"Error retrieving purchase order data: {poResponse.StatusCode} - {await poResponse.Content.ReadAsStringAsync()}";
+            }
+
+            // Deserialize the purchase order
+            var poContent = await poResponse.Content.ReadAsStringAsync();
+            var purchaseOrder = JsonSerializer.Deserialize<PurchaseOrder>(poContent, _jsonOptions);
+
+            if (purchaseOrder == null)
+            {
+                return "Error parsing purchase order data.";
+            }
+
+            // Validate that purchase order is not closed
+            if (purchaseOrder.Status != null && purchaseOrder.Status.Equals("Closed", StringComparison.OrdinalIgnoreCase))
+            {
+                return $"Cannot create an invoice for purchase order {poNumber} because it is closed.";
+            }
+
+            // Create a new invoice based on the purchase order
+            var invoice = new Invoice
+            {
+                PurchaseOrderNumber = purchaseOrder.PurchaseOrderNumber,
+                SupplierName = purchaseOrder.SupplierName,
+                SupplierId = purchaseOrder.SupplierId,
+                InvoiceDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                DueDate = DateTime.Now.AddDays(30).ToString("yyyy-MM-dd"), // Default 30 days payment term
+                Currency = "USD",
+                Status = "Pending Approval",
+                LineItems = purchaseOrder.LineItems?.Select(poItem => new LineItem
+                {
+                    ItemId = poItem.ItemId,
+                    Description = poItem.Description,
+                    Quantity = poItem.Quantity,
+                    UnitPrice = poItem.UnitPrice,
+                    TotalPrice = poItem.TotalPrice
+                }).ToList(),
+                Subtotal = purchaseOrder.Subtotal,
+                Tax = purchaseOrder.Tax,
+                Shipping = purchaseOrder.Shipping,
+                Total = purchaseOrder.Total
+            };
+
+            // Assign an approver based on total amount (this logic could be more complex in real systems)
+            if (invoice.Total <= 10000)
+            {
+                invoice.Approver = "JuniorApprover";
+            }
+            else if (invoice.Total <= 50000)
+            {
+                invoice.Approver = "SeniorApprover";
+            }
+            else
+            {
+                invoice.Approver = "ExecutiveApprover";
+            }
+
+            // Generate a unique invoice number
+            invoice.InvoiceNumber = $"INV-{DateTime.Now:yyyyMMdd}-{poNumber}";
+
+            // Create the invoice via POST to the invoice API
+            string createUrl = $"{_baseUrl}/api/Invoices";
+            
+            // Log what we're sending to help debug
+            string jsonPayload = JsonSerializer.Serialize(invoice, _jsonOptions);
+            
+            var jsonContent = new StringContent(
+                jsonPayload,
+                Encoding.UTF8,
+                "application/json");
+
+            // Make the API call
+            var createResponse = await _httpClient.PostAsync(createUrl, jsonContent);
+
+            // Check if the request was successful
+            if (createResponse.IsSuccessStatusCode)
+            {
+                var createdContent = await createResponse.Content.ReadAsStringAsync();
+                
+                // Try to deserialize the response, but if it fails, still return a success message
+                try
+                {
+                    var createdInvoice = JsonSerializer.Deserialize<Invoice>(createdContent, _jsonOptions);
+                    
+                    if (createdInvoice != null)
+                    {
+                        return $"Invoice #{createdInvoice.InvoiceNumber} was successfully created for purchase order {poNumber}.\n" +
+                               $"Total amount: ${createdInvoice.Total:F2}\n" +
+                               $"Status: {createdInvoice.Status}\n" +
+                               $"Assigned approver: {createdInvoice.Approver}";
+                    }
+                }
+                catch (JsonException jsonEx)
+                {
+                    // If we can't deserialize the response but the status was successful,
+                    // still report success but include the raw response
+                    return $"Invoice for purchase order {poNumber} was created successfully. " +
+                           $"Response: {createdContent} (Warning: Could not parse response: {jsonEx.Message})";
+                }
+                
+                // If we get here, the status was success but we couldn't parse the invoice details
+                return $"Invoice for purchase order {poNumber} was created successfully. Raw response: {createdContent}";
+            }
+            else
+            {
+                var errorContent = await createResponse.Content.ReadAsStringAsync();
+                return $"Error creating invoice: HTTP {(int)createResponse.StatusCode} ({createResponse.StatusCode}) - {errorContent}";
+            }
+        }
+        catch (Exception ex)
+        {
+            // Include more details about the exception
+            string exDetails = ex.InnerException != null ? 
+                $"{ex.Message} | Inner exception: {ex.InnerException.Message}" : 
+                ex.Message;
+                
+            return $"Error creating invoice for purchase order: {exDetails}";
         }
     }
 }
