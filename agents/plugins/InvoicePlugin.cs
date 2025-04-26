@@ -310,8 +310,10 @@ public class InvoicePlugin
                 return "Error: Could not parse the invoice template data.";
             }
             
+            var random = new Random();
+            string randomDigits = random.Next(100000, 1000000).ToString();
             // Generate a final invoice number (replacing the draft one)
-            invoiceTemplate.InvoiceNumber = $"INV-{DateTime.Now:yyyyMMdd}-{invoiceTemplate.PurchaseOrderNumber}";
+            invoiceTemplate.InvoiceNumber = $"INV-{DateTime.Now:yyyyMMdd}-{random}";
             
             // Set proper status for new invoice
             invoiceTemplate.Status = "Pending Approval";

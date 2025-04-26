@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 namespace InvoiceAPI.Models;
 
 public class InvoiceLineItem
@@ -27,20 +28,4 @@ public class Invoice
     public string? Currency { get; set; }
     public string? Status { get; set; }
     public string? Stage { get; set; }
-}
-
-public class InvoiceDatabase
-{
-    public List<Invoice> Invoices { get; set; } = [];
-}
-
-public class ApprovalRequest
-{
-    public string? ApproverName { get; set; }
-}
-
-public class StatusUpdateRequest
-{
-    public string? Status { get; set; }
-    public string? UpdatedBy { get; set; }
 }

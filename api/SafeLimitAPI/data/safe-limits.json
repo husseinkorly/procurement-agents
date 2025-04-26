@@ -3,7 +3,7 @@
     {
       "UserId": "user001",
       "UserName": "Sarah Johnson",
-      "ApprovalLimit": 250,
+      "ApprovalLimit": 2000.00,
       "Currency": "USD",
       "Role": "Finance Manager"
     },

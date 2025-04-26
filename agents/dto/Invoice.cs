@@ -48,6 +48,9 @@ public class Invoice
 
     [JsonPropertyName("status")]
     public string? Status { get; set; }
+
+    [JsonPropertyName("stage")]
+    public string? Stage { get; set; }
 }
 
 public class LineItem
@@ -66,4 +69,10 @@ public class LineItem
 
     [JsonPropertyName("totalPrice")]
     public double TotalPrice { get; set; }
+}
+
+public class InvoiceDatabase
+{
+    [JsonPropertyName("Invoices")]
+    public List<Invoice> Invoices { get; set; } = [];
 }

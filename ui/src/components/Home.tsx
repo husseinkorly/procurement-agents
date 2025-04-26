@@ -59,6 +59,7 @@ export default function Home() {
   const mainRef = useRef<HTMLDivElement>(null);
 
   const suggestedPrompts: SuggestedPrompt[] = [
+    { text: 'List POs with invoices ready for review.' },
     { text: 'List all open POs ready for invoicing.' },
     { text: 'List all pending invoices for approval.' },
     { text: 'Create an invoice for PO number' },

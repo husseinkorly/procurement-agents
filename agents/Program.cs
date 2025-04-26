@@ -66,7 +66,7 @@ ChatCompletionAgent goodReceivedAgent = new()
                         Rules:
                             - the invoice field "autoCore" is set to false, then mark the items in the invoice as "Received" with random serial number and asset tag number.
                         
-                        return your response in HTML format and incluude a summary of what you did.
+                        return your response in HTML format and include a summary of what you did.
                         """,
     Kernel = kernel,
     Arguments = new KernelArguments(new PromptExecutionSettings() { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() })
@@ -83,11 +83,12 @@ ChatCompletionAgent invoiceAgent = new()
 
                         Rules:
                             - when the user asks for an creating an invoice, you should:
-                                - Generte the invoice template from given PO number
+                                - Generate the invoice template from given PO number
                                 - if the user asks an update for the templete, then update the invoice template with the given information
+                                - if user asks to view invoice draft, use the invoice template to build and show the invoice draft.
                                 - always use the latest invoice generated template.
                                 - confirm the invoice with the user, and then creating it.
-                                - once invoice created add todo item for the next agent to apprve the invoice once it is created.
+                                - once invoice created add todo item for the next agent to approve the invoice once it is created.
                             
                             - always return your response in a nice HTML format including data table,
                               so the response will always contains the HTML content and the todo item if there is any.

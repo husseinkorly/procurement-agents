@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Text.Json;
 using Microsoft.SemanticKernel;
 using agents.dto;
+using System.Text;
 
 namespace agents.plugins;
 
@@ -138,6 +139,128 @@ public class PurchaseOrderPlugin
         catch (Exception ex)
         {
             return $"Error connecting to Purchase Order API: {ex.Message}";
+        }
+    }
+
+    [KernelFunction("get_purchase_orders_with_draft_invoices")]
+    [Description("Get all purchase orders that have an invoice in the Draft stage. They are ready for review")]
+    public async Task<string> GetPurchaseOrdersWithDraftInvoices()
+    {
+        try
+        {
+            // First get all purchase orders
+            string poUrl = $"{_baseUrl}/api/PurchaseOrders";
+            var poResponse = await _httpClient.GetAsync(poUrl);
+
+            if (!poResponse.IsSuccessStatusCode)
+            {
+                return $"Error retrieving purchase orders: {poResponse.StatusCode} - {await poResponse.Content.ReadAsStringAsync()}";
+            }
+            
+            var poContent = await poResponse.Content.ReadAsStringAsync();
+            var allPurchaseOrders = JsonSerializer.Deserialize<List<PurchaseOrder>>(poContent, _jsonOptions);
+            
+            if (allPurchaseOrders == null || allPurchaseOrders.Count == 0)
+            {
+                return "No purchase orders found in the database.";
+            }
+            
+            // Now get invoices from Invoice API
+            string invoiceUrl = "http://localhost:5136/api/Invoices";
+            var invoiceResponse = await _httpClient.GetAsync(invoiceUrl);
+            
+            if (!invoiceResponse.IsSuccessStatusCode)
+            {
+                return $"Error retrieving invoices: {invoiceResponse.StatusCode} - {await invoiceResponse.Content.ReadAsStringAsync()}";
+            }
+            
+            var invoiceContent = await invoiceResponse.Content.ReadAsStringAsync();
+            
+            // Parse invoices using JsonDocument to handle both possible response formats
+            List<Invoice> invoices = new List<Invoice>();
+            try
+            {
+                using JsonDocument document = JsonDocument.Parse(invoiceContent);
+                JsonElement root = document.RootElement;
+                
+                // Check if response is an object with "Invoices" property or a direct array
+                if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("Invoices", out JsonElement invoicesElement))
+                {
+                    // It's an object with Invoices property
+                    invoices = JsonSerializer.Deserialize<List<Invoice>>(invoicesElement.GetRawText(), _jsonOptions) ?? [];
+                }
+                else if (root.ValueKind == JsonValueKind.Array)
+                {
+                    // It's a direct array of invoices
+                    invoices = JsonSerializer.Deserialize<List<Invoice>>(invoiceContent, _jsonOptions) ?? [];
+                }
+                else
+                {
+                    return "Unknown invoice data format received.";
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"Error parsing invoice data: {ex.Message}";
+            }
+            
+            // Extract PO numbers of invoices in Draft stage and count them
+            var draftInvoicesByPO = new Dictionary<string, int>();
+            foreach (var invoice in invoices)
+            {
+                // Check if the Stage property is "Draft"
+                if (invoice.Stage == "Draft" && !string.IsNullOrEmpty(invoice.PurchaseOrderNumber))
+                {
+                    if (draftInvoicesByPO.ContainsKey(invoice.PurchaseOrderNumber))
+                    {
+                        draftInvoicesByPO[invoice.PurchaseOrderNumber]++;
+                    }
+                    else
+                    {
+                        draftInvoicesByPO[invoice.PurchaseOrderNumber] = 1;
+                    }
+                }
+            }
+            
+            // Filter purchase orders with draft invoices
+            var purchaseOrdersWithDraftInvoices = allPurchaseOrders
+                .Where(po => po.PurchaseOrderNumber != null && draftInvoicesByPO.ContainsKey(po.PurchaseOrderNumber))
+                .ToList();
+            
+            if (purchaseOrdersWithDraftInvoices.Count == 0)
+            {
+                return "No purchase orders found with invoices in Draft stage.";
+            }
+            
+            // Format the response
+            StringBuilder result = new StringBuilder();
+            result.AppendLine($"Found {purchaseOrdersWithDraftInvoices.Count} purchase orders with invoices in Draft stage:");
+            result.AppendLine();
+            
+            // Create a numbered list of POs for easy selection
+            for (int i = 0; i < purchaseOrdersWithDraftInvoices.Count; i++)
+            {
+                var po = purchaseOrdersWithDraftInvoices[i];
+                int draftCount = draftInvoicesByPO[po.PurchaseOrderNumber!];
+                result.AppendLine($"[{i + 1}] PO #: {po.PurchaseOrderNumber}");
+                result.AppendLine($"    Supplier: {po.SupplierName}");
+                result.AppendLine($"    Drafts: ({draftCount})");
+                result.AppendLine($"    Status: {po.Status}");
+                result.AppendLine($"    Total: ${po.Total:F2}");
+                result.AppendLine();
+            }
+            
+            // Add a prompt for the user to select a PO
+            result.AppendLine("Which purchase order would you like to view draft invoices for? Please respond with the PO number.");
+            result.AppendLine("For example: \"I want to see draft invoices for PO 5100063118\"");
+            result.AppendLine();
+            result.AppendLine("You can use the get_draft_invoices_by_po function to view and edit draft invoices for a specific PO.");
+            
+            return result.ToString();
+        }
+        catch (Exception ex)
+        {
+            return $"Error retrieving purchase orders with draft invoices: {ex.Message}";
         }
     }
 }
