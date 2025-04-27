@@ -87,8 +87,8 @@ ChatCompletionAgent invoiceAgent = new()
                                 - if the user asks an update for the templete, then update the invoice template with the given information
                                 - if user asks to view invoice draft, use the invoice template to build and show the invoice draft.
                                 - always use the latest invoice generated template.
-                                - confirm the invoice with the user, and then creating it.
-                                - once invoice created add todo item for the next agent to approve the invoice once it is created.
+                                - confirm the invoice with the user before creating it, and then creating it.
+                                - once invoice created (even if created from draft) add todo item for the next agent to approve the invoice once it is created.
                             
                             - always return your response in a nice HTML format including data table,
                               so the response will always contains the HTML content and the todo item if there is any.

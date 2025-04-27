@@ -48,9 +48,6 @@ public class Invoice
 
     [JsonPropertyName("status")]
     public string? Status { get; set; }
-
-    [JsonPropertyName("stage")]
-    public string? Stage { get; set; }
 }
 
 public class LineItem

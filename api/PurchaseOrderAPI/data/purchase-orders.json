@@ -1,200 +1,207 @@
 {
-  "purchaseOrders": [
+  "PurchaseOrders": [
     {
-      "purchaseOrderNumber": "5100063118",
-      "supplierName": "Zones, Inc.",
-      "supplierId": "0003014194",
-      "orderDate": "2025-02-15",
-      "expectedDeliveryDate": "2025-03-15",
-      "shippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
-      "autoCore": true,
-      "lineItems": [
+      "PurchaseOrderNumber": "5100063118",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "OrderDate": "2025-02-15",
+      "ExpectedDeliveryDate": "2025-03-15",
+      "ShippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
+      "AutoCore": true,
+      "LineItems": [
         {
-          "itemId": "10",
-          "description": "Description: Surface Laptop 7",
-          "quantity": 1,
-          "unitPrice": 1129.65,
-          "totalPrice": 1129.65
+          "ItemId": "10",
+          "Description": "Description: Surface Laptop 7",
+          "Quantity": 1,
+          "UnitPrice": 1129.65,
+          "TotalPrice": 1129.65
         }
       ],
-      "subtotal": 1129.65,
-      "tax": 17.19,
-      "shipping": 12.50,
-      "total": 1159.34,
-      "currency": "USD",
-      "status": "Open",
-      "requestorName": "John Smith",
-      "approvalDate": "null"
+      "Subtotal": 1129.65,
+      "Tax": 17.19,
+      "Shipping": 12.50,
+      "Total": 1159.34,
+      "Currency": "USD",
+      "Status": "Open",
+      "RequestorName": "John Smith",
+      "ApprovalDate": "null",
+      "Drafts": 0
     },
     {
-      "purchaseOrderNumber": "5100063064",
-      "supplierName": "Zones, Inc.",
-      "supplierId": "0003014194",
-      "orderDate": "2025-02-01",
-      "expectedDeliveryDate": "2025-02-28",
-      "shippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
-      "autoCore": true,
-      "lineItems": [
+      "PurchaseOrderNumber": "5100063064",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "OrderDate": "2025-02-01",
+      "ExpectedDeliveryDate": "2025-02-28",
+      "ShippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
+      "AutoCore": true,
+      "LineItems": [
         {
-          "itemId": "10",
-          "description": "Description: Surface Laptop 7",
-          "quantity": 1,
-          "unitPrice": 1181.60,
-          "totalPrice": 1181.60
+          "ItemId": "10",
+          "Description": "Description: Surface Laptop 7",
+          "Quantity": 1,
+          "UnitPrice": 1181.60,
+          "TotalPrice": 1181.60
         }
       ],
-      "subtotal": 1181.60,
-      "tax": 10,
-      "shipping": 5,
-      "total": 1196.60,
-      "currency": "USD",
-      "status": "Open",
-      "requestorName": "Sarah Johnson",
-      "approvalDate": "null"
+      "Subtotal": 1181.60,
+      "Tax": 10,
+      "Shipping": 5,
+      "Total": 1196.60,
+      "Currency": "USD",
+      "Status": "Open",
+      "RequestorName": "Sarah Johnson",
+      "ApprovalDate": "null",
+      "Drafts": 1
     },
     {
-      "purchaseOrderNumber": "5100062269",
-      "supplierName": "Zones, Inc.",
-      "supplierId": "0003014194",
-      "orderDate": "2025-03-01",
-      "expectedDeliveryDate": "2025-03-25",
-      "shippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
-      "autoCore": true,
-      "lineItems": [
+      "PurchaseOrderNumber": "5100062269",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "OrderDate": "2025-03-01",
+      "ExpectedDeliveryDate": "2025-03-25",
+      "ShippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
+      "AutoCore": true,
+      "LineItems": [
         {
-          "itemId": "10",
-          "description": "Description: AppleCare for Enterprise 16-inch MacBook Pro (M3) 48",
-          "quantity": 1,
-          "unitPrice": 239.00,
-          "totalPrice": 239.00
+          "ItemId": "10",
+          "Description": "Description: AppleCare for Enterprise 16-inch MacBook Pro (M3) 48",
+          "Quantity": 1,
+          "UnitPrice": 239.00,
+          "TotalPrice": 239.00
         },
         {
-          "itemId": "20",
-          "description": "Description: 16-INCH MACBOOK PRO APPLE M4 MAX CHIP WITH 14 CORE CPU",
-          "quantity": 1,
-          "unitPrice": 3250.99,
-          "totalPrice": 3250.99
+          "ItemId": "20",
+          "Description": "Description: 16-INCH MACBOOK PRO APPLE M4 MAX CHIP WITH 14 CORE CPU",
+          "Quantity": 1,
+          "UnitPrice": 3250.99,
+          "TotalPrice": 3250.99
         },
         {
-          "itemId": "30",
-          "description": "DDescription: WP - MS Asset Tag and ReportManufacturer Part: 28641",
-          "quantity": 1,
-          "unitPrice": 5.00,
-          "totalPrice": 5.00
+          "ItemId": "30",
+          "Description": "DDescription: WP - MS Asset Tag and ReportManufacturer Part: 28641",
+          "Quantity": 1,
+          "UnitPrice": 5.00,
+          "TotalPrice": 5.00
         }
       ],
-      "subtotal": 3494.99,
-      "tax": 136.00,
-      "shipping": 30,
-      "total": 3660.99,
-      "currency": "USD",
-      "status": "Open",
-      "requestorName": "Michael Chen",
-      "approvalDate": "2025-03-05"
+      "Subtotal": 3494.99,
+      "Tax": 136.00,
+      "Shipping": 30,
+      "Total": 3660.99,
+      "Currency": "USD",
+      "Status": "Open",
+      "RequestorName": "Michael Chen",
+      "ApprovalDate": "2025-03-05",
+      "Drafts": 1
     },
     {
-      "purchaseOrderNumber": "0101321275",
-      "supplierName": "Zones, Inc.",
-      "supplierId": "0003014194",
-      "orderDate": "2025-03-10",
-      "expectedDeliveryDate": "2025-03-30",
-      "shippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
-      "autoCore": false,
-      "lineItems": [
+      "PurchaseOrderNumber": "0101321275",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "OrderDate": "2025-03-10",
+      "ExpectedDeliveryDate": "2025-03-30",
+      "ShippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
+      "AutoCore": false,
+      "LineItems": [
         {
-          "itemId": "10",
-          "description": "Description: Logitech USB Headset H570e",
-          "quantity": 20,
-          "unitPrice": 41.00,
-          "totalPrice": 820.00
+          "ItemId": "10",
+          "Description": "Description: Logitech USB Headset H570e",
+          "Quantity": 20,
+          "UnitPrice": 41.00,
+          "TotalPrice": 820.00
         }
       ],
-      "subtotal": 820.00,
-      "tax": 85.83,
-      "shipping": 13.32,
-      "total": 919.15,
-      "currency": "USD",
-      "status": "Open",
-      "requestorName": "Emma Wilson",
-      "approvalDate": "null"
+      "Subtotal": 820.00,
+      "Tax": 85.83,
+      "Shipping": 13.32,
+      "Total": 919.15,
+      "Currency": "USD",
+      "Status": "Open",
+      "RequestorName": "Emma Wilson",
+      "ApprovalDate": "null",
+      "Drafts": 1
     },
     {
-      "purchaseOrderNumber": "0101321049",
-      "supplierName": "Zones, Inc.",
-      "supplierId": "0003014194",
-      "orderDate": "2025-01-15",
-      "expectedDeliveryDate": "2025-02-15",
-      "shippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
-      "autoCore": true,
-      "lineItems": [
+      "PurchaseOrderNumber": "0101321049",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "OrderDate": "2025-01-15",
+      "ExpectedDeliveryDate": "2025-02-15",
+      "ShippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
+      "AutoCore": true,
+      "LineItems": [
         {
-          "itemId": "20",
-          "description": "Computer",
-          "quantity": 1,
-          "unitPrice": 5000.00,
-          "totalPrice": 5000.00
+          "ItemId": "20",
+          "Description": "Computer",
+          "Quantity": 1,
+          "UnitPrice": 5000.00,
+          "TotalPrice": 5000.00
         }
       ],
-      "subtotal": 5000.00,
-      "tax": 100.00,
-      "shipping": 20,
-      "total": 5120.00,
-      "currency": "USD",
-      "status": "Closed",
-      "requestorName": "David Rodriguez",
-      "approvalDate": "2025-01-20"
+      "Subtotal": 5000.00,
+      "Tax": 100.00,
+      "Shipping": 20,
+      "Total": 5120.00,
+      "Currency": "USD",
+      "Status": "Closed",
+      "RequestorName": "David Rodriguez",
+      "ApprovalDate": "2025-01-20",
+      "Drafts": 0
     },
     {
-      "purchaseOrderNumber": "0101320993",
-      "supplierName": "Zones, Inc.",
-      "supplierId": "0003014194",
-      "orderDate": "2025-03-20",
-      "expectedDeliveryDate": "2025-04-20",
-      "shippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
-      "autoCore": true,
-      "lineItems": [
+      "PurchaseOrderNumber": "0101320993",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "OrderDate": "2025-03-20",
+      "ExpectedDeliveryDate": "2025-04-20",
+      "ShippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
+      "AutoCore": true,
+      "LineItems": [
         {
-          "itemId": "10",
-          "description": "Ergonomic Office Chair",
-          "quantity": 5,
-          "unitPrice": 299.99,
-          "totalPrice": 1499.95
+          "ItemId": "10",
+          "Description": "Ergonomic Office Chair",
+          "Quantity": 5,
+          "UnitPrice": 299.99,
+          "TotalPrice": 1499.95
         }
       ],
-      "subtotal": 2999.92,
-      "tax": 240.00,
-      "shipping": 150.00,
-      "total": 3389.92,
-      "currency": "USD",
-      "status": "Closed",
-      "requestorName": "Lisa Thompson",
-      "approvalDate": "2025-03-25"
+      "Subtotal": 2999.92,
+      "Tax": 240.00,
+      "Shipping": 150.00,
+      "Total": 3389.92,
+      "Currency": "USD",
+      "Status": "Closed",
+      "RequestorName": "Lisa Thompson",
+      "ApprovalDate": "2025-03-25",
+      "Drafts": 0
     },
     {
-      "purchaseOrderNumber": "0101313516",
-      "supplierName": "Zones, Inc.",
-      "supplierId": "0003014194",
-      "orderDate": "2025-04-01",
-      "expectedDeliveryDate": "2025-05-01",
-      "shippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
-      "autoCore": true,
-      "lineItems": [
+      "PurchaseOrderNumber": "0101313516",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "OrderDate": "2025-04-01",
+      "ExpectedDeliveryDate": "2025-05-01",
+      "ShippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
+      "AutoCore": true,
+      "LineItems": [
         {
-          "itemId": "10",
-          "description": "Description: NH Laptop 7 13.8in Intel/32GB/1TB SSD",
-          "quantity": 1,
-          "unitPrice":1233.55,
-          "totalPrice": 1233.55
+          "ItemId": "10",
+          "Description": "Description: NH Laptop 7 13.8in Intel/32GB/1TB SSD",
+          "Quantity": 1,
+          "UnitPrice": 1233.55,
+          "TotalPrice": 1233.55
         }
       ],
-      "subtotal": 1233.55,
-      "tax": 100,
-      "shipping": 20,
-      "total": 1353.55,
-      "currency": "USD",
-      "status": "Open",
-      "requestorName": "Robert Blake",
-      "approvalDate": null
+      "Subtotal": 1233.55,
+      "Tax": 100,
+      "Shipping": 20,
+      "Total": 1353.55,
+      "Currency": "USD",
+      "Status": "Open",
+      "RequestorName": "Robert Blake",
+      "ApprovalDate": null,
+      "Drafts": 0
     }
   ]
 }

@@ -99,4 +99,26 @@ public class PurchaseOrderService
         
         return purchaseOrder;
     }
+    
+    // Decrement the draft count for a purchase order
+    public async Task<PurchaseOrder?> DecrementDraftCountAsync(string poNumber)
+    {
+        var purchaseOrder = GetPurchaseOrderByNumber(poNumber);
+        
+        if (purchaseOrder == null)
+        {
+            return null;
+        }
+
+        // Only decrement if the draft count is greater than 0
+        if (purchaseOrder.Drafts > 0)
+        {
+            purchaseOrder.Drafts--;
+            
+            // Save changes
+            await SavePurchaseOrdersToFile();
+        }
+        
+        return purchaseOrder;
+    }
 }

@@ -23,8 +23,7 @@
       "Shipping": 12.50,
       "Total": 1159.34,
       "Currency": "USD",
-      "Status": "Pending Approval",
-      "Stage": "Draft"
+      "Status": "Pending Approval"
     },
     {
       "InvoiceNumber": "5734001876",
@@ -49,8 +48,7 @@
       "Shipping": 5.00,
       "Total": 1196.60,
       "Currency": "USD",
-      "Status": "Pending Approval",
-      "Stage": "Draft"
+      "Status": "Pending Approval"
     },
     {
       "InvoiceNumber": "5734001529",
@@ -89,8 +87,7 @@
       "Shipping": 30.00,
       "Total": 3660.99,
       "Currency": "USD",
-      "Status": "Paid",
-      "Stage": null
+      "Status": "Paid"
     },
     {
       "InvoiceNumber": "5734001194",
@@ -115,8 +112,7 @@
       "Shipping": 13.32,
       "Total": 919.15,
       "Currency": "USD",
-      "Status": "Pending Approval",
-      "Stage": "Draft"
+      "Status": "Pending Approval"
     },
     {
       "InvoiceNumber": "5734001703",
@@ -141,8 +137,7 @@
       "Shipping": 20.00,
       "Total": 5120.00,
       "Currency": "USD",
-      "Status": "Rejected",
-      "Stage": "Completed"
+      "Status": "Rejected"
     },
     {
       "InvoiceNumber": "5734001421",
@@ -167,8 +162,7 @@
       "Shipping": 75.00,
       "Total": 1694.95,
       "Currency": "USD",
-      "Status": "Approved",
-      "Stage": "Submitted"
+      "Status": "Approved"
     },
     {
       "InvoiceNumber": "5734001638",
@@ -193,34 +187,7 @@
       "Shipping": 20.00,
       "Total": 1353.55,
       "Currency": "USD",
-      "Status": "Pending Approval",
-      "Stage": "Draft"
-    },
-    {
-      "InvoiceNumber": "5734001987",
-      "PurchaseOrderNumber": "5100063118",
-      "SupplierName": "Zones, Inc.",
-      "SupplierId": "0003014194",
-      "InvoiceDate": "2025-04-24",
-      "DueDate": "2025-05-24",
-      "Approver": "JuniorApprover",
-      "AutoCore": false,
-      "LineItems": [
-        {
-          "ItemId": "10",
-          "Description": "Description: Surface Laptop 7",
-          "Quantity": 1,
-          "UnitPrice": 1129.65,
-          "TotalPrice": 1129.65
-        }
-      ],
-      "Subtotal": 1129.65,
-      "Tax": 17.19,
-      "Shipping": 12.50,
-      "Total": 1159.34,
-      "Currency": "USD",
-      "Status": "Pending Approval",
-      "Stage": "Draft"
+      "Status": "Pending Approval"
     },
     {
       "InvoiceNumber": "5734001257",
@@ -245,38 +212,11 @@
       "Shipping": 13.32,
       "Total": 919.15,
       "Currency": "USD",
-      "Status": "Approved",
-      "Stage": "Completed"
+      "Status": "Approved"
     },
     {
-      "InvoiceNumber": "INV-20250426-5100063118",
-      "PurchaseOrderNumber": "5100063118",
-      "SupplierName": "Zones, Inc.",
-      "SupplierId": "0003014194",
-      "InvoiceDate": "2023-11-01",
-      "DueDate": "2025-05-26",
-      "Approver": "JuniorApprover",
-      "AutoCore": true,
-      "LineItems": [
-        {
-          "ItemId": "10",
-          "Description": "Description: Surface Laptop 7",
-          "Quantity": 1,
-          "UnitPrice": 1129.65,
-          "TotalPrice": 1129.65
-        }
-      ],
-      "Subtotal": 1129.65,
-      "Tax": 17.19,
-      "Shipping": 12.5,
-      "Total": 1159.34,
-      "Currency": "USD",
-      "Status": "Pending Approval",
-      "Stage": null
-    },
-    {
-      "InvoiceNumber": "INV-20250426-System.Random",
-      "PurchaseOrderNumber": "5100063118",
+      "InvoiceNumber": "573400213",
+      "PurchaseOrderNumber": "5100063064",
       "SupplierName": "Zones, Inc.",
       "SupplierId": "0003014194",
       "InvoiceDate": "2025-04-26",
@@ -288,17 +228,16 @@
           "ItemId": "10",
           "Description": "Description: Surface Laptop 7",
           "Quantity": 1,
-          "UnitPrice": 1129.65,
-          "TotalPrice": 1129.65
+          "UnitPrice": 1181.6,
+          "TotalPrice": 1181.6
         }
       ],
-      "Subtotal": 1129.65,
-      "Tax": 17.19,
-      "Shipping": 12.5,
-      "Total": 1159.34,
+      "Subtotal": 1181.6,
+      "Tax": 10,
+      "Shipping": 5,
+      "Total": 1196.6,
       "Currency": "USD",
-      "Status": "Approved",
-      "Stage": null
+      "Status": "Pending Approval"
     }
   ]
 }

@@ -165,86 +165,28 @@ public class PurchaseOrderPlugin
                 return "No purchase orders found in the database.";
             }
             
-            // Now get invoices from Invoice API
-            string invoiceUrl = "http://localhost:5136/api/Invoices";
-            var invoiceResponse = await _httpClient.GetAsync(invoiceUrl);
-            
-            if (!invoiceResponse.IsSuccessStatusCode)
-            {
-                return $"Error retrieving invoices: {invoiceResponse.StatusCode} - {await invoiceResponse.Content.ReadAsStringAsync()}";
-            }
-            
-            var invoiceContent = await invoiceResponse.Content.ReadAsStringAsync();
-            
-            // Parse invoices using JsonDocument to handle both possible response formats
-            List<Invoice> invoices = new List<Invoice>();
-            try
-            {
-                using JsonDocument document = JsonDocument.Parse(invoiceContent);
-                JsonElement root = document.RootElement;
-                
-                // Check if response is an object with "Invoices" property or a direct array
-                if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("Invoices", out JsonElement invoicesElement))
-                {
-                    // It's an object with Invoices property
-                    invoices = JsonSerializer.Deserialize<List<Invoice>>(invoicesElement.GetRawText(), _jsonOptions) ?? [];
-                }
-                else if (root.ValueKind == JsonValueKind.Array)
-                {
-                    // It's a direct array of invoices
-                    invoices = JsonSerializer.Deserialize<List<Invoice>>(invoiceContent, _jsonOptions) ?? [];
-                }
-                else
-                {
-                    return "Unknown invoice data format received.";
-                }
-            }
-            catch (Exception ex)
-            {
-                return $"Error parsing invoice data: {ex.Message}";
-            }
-            
-            // Extract PO numbers of invoices in Draft stage and count them
-            var draftInvoicesByPO = new Dictionary<string, int>();
-            foreach (var invoice in invoices)
-            {
-                // Check if the Stage property is "Draft"
-                if (invoice.Stage == "Draft" && !string.IsNullOrEmpty(invoice.PurchaseOrderNumber))
-                {
-                    if (draftInvoicesByPO.ContainsKey(invoice.PurchaseOrderNumber))
-                    {
-                        draftInvoicesByPO[invoice.PurchaseOrderNumber]++;
-                    }
-                    else
-                    {
-                        draftInvoicesByPO[invoice.PurchaseOrderNumber] = 1;
-                    }
-                }
-            }
-            
-            // Filter purchase orders with draft invoices
-            var purchaseOrdersWithDraftInvoices = allPurchaseOrders
-                .Where(po => po.PurchaseOrderNumber != null && draftInvoicesByPO.ContainsKey(po.PurchaseOrderNumber))
+            // Filter purchase orders with drafts (using the Drafts property)
+            var purchaseOrdersWithDrafts = allPurchaseOrders
+                .Where(po => po.Drafts > 0)
                 .ToList();
             
-            if (purchaseOrdersWithDraftInvoices.Count == 0)
+            if (purchaseOrdersWithDrafts.Count == 0)
             {
                 return "No purchase orders found with invoices in Draft stage.";
             }
             
             // Format the response
             StringBuilder result = new StringBuilder();
-            result.AppendLine($"Found {purchaseOrdersWithDraftInvoices.Count} purchase orders with invoices in Draft stage:");
+            result.AppendLine($"Found {purchaseOrdersWithDrafts.Count} purchase orders with invoices in Draft stage:");
             result.AppendLine();
             
             // Create a numbered list of POs for easy selection
-            for (int i = 0; i < purchaseOrdersWithDraftInvoices.Count; i++)
+            for (int i = 0; i < purchaseOrdersWithDrafts.Count; i++)
             {
-                var po = purchaseOrdersWithDraftInvoices[i];
-                int draftCount = draftInvoicesByPO[po.PurchaseOrderNumber!];
+                var po = purchaseOrdersWithDrafts[i];
                 result.AppendLine($"[{i + 1}] PO #: {po.PurchaseOrderNumber}");
                 result.AppendLine($"    Supplier: {po.SupplierName}");
-                result.AppendLine($"    Drafts: ({draftCount})");
+                result.AppendLine($"    Drafts: {po.Drafts}");
                 result.AppendLine($"    Status: {po.Status}");
                 result.AppendLine($"    Total: ${po.Total:F2}");
                 result.AppendLine();

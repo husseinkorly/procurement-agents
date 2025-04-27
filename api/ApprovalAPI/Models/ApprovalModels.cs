@@ -39,7 +39,6 @@ public class Invoice
     public decimal Total { get; set; }
     public string? Currency { get; set; }
     public string? Status { get; set; }
-    public string? Stage { get; set; }
 }
 
 public class InvoiceLineItem

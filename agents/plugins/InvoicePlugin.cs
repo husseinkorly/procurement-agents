@@ -310,10 +310,11 @@ public class InvoicePlugin
                 return "Error: Could not parse the invoice template data.";
             }
             
+            // Generate a random 3-digit number
             var random = new Random();
-            string randomDigits = random.Next(100000, 1000000).ToString();
+            int randomDigits = random.Next(100, 1000);
             // Generate a final invoice number (replacing the draft one)
-            invoiceTemplate.InvoiceNumber = $"INV-{DateTime.Now:yyyyMMdd}-{random}";
+            invoiceTemplate.InvoiceNumber = $"573400{randomDigits}";
             
             // Set proper status for new invoice
             invoiceTemplate.Status = "Pending Approval";
@@ -342,12 +343,32 @@ public class InvoicePlugin
                 Encoding.UTF8,
                 "application/json");
 
-            // Make the API call
+            // Make the API call to create the invoice
             var createResponse = await _httpClient.PostAsync(createUrl, jsonContent);
 
-            // Check if the request was successful
+            // If invoice creation was successful, update the PO draft count
             if (createResponse.IsSuccessStatusCode)
             {
+                // Extract the purchase order number from the template
+                string? poNumber = invoiceTemplate.PurchaseOrderNumber;
+                
+                if (!string.IsNullOrEmpty(poNumber))
+                {
+                    try
+                    {
+                        // Use the dedicated endpoint to decrement the draft count
+                        string decrementUrl = $"{_purchaseOrderApiBaseUrl}/api/PurchaseOrders/{poNumber}/decrement-draft";
+                        await _httpClient.PutAsync(decrementUrl, null);
+                        // We don't need to check the response here as this is a secondary operation
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log the error but continue with invoice creation
+                        Console.WriteLine($"Error updating PO draft count: {ex.Message}");
+                    }
+                }
+                
+                // Continue with existing successful response handling
                 var createdContent = await createResponse.Content.ReadAsStringAsync();
                 
                 try
@@ -359,7 +380,8 @@ public class InvoicePlugin
                         return $"Invoice #{createdInvoice.InvoiceNumber} was successfully created for purchase order {createdInvoice.PurchaseOrderNumber}.\n" +
                                $"Total amount: ${createdInvoice.Total:F2}\n" +
                                $"Status: {createdInvoice.Status}\n" +
-                               $"Assigned approver: {createdInvoice.Approver}";
+                               $"Assigned approver: {createdInvoice.Approver}\n" +
+                               $"(Draft count for PO has been updated)";
                     }
                 }
                 catch (JsonException jsonEx)

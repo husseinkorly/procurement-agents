@@ -51,6 +51,9 @@ public class PurchaseOrder
 
     [JsonPropertyName("approvalDate")]
     public string? ApprovalDate { get; set; }
+
+    [JsonPropertyName("drafts")]
+    public int Drafts { get; set; }
 }
 
 public class POLineItem

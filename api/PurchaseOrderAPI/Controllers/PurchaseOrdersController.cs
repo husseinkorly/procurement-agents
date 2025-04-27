@@ -83,4 +83,27 @@ public class PurchaseOrdersController : ControllerBase
             return StatusCode(500, "An error occurred while updating the purchase order status");
         }
     }
+    
+    [HttpPut("{poNumber}/decrement-draft")]
+    public async Task<ActionResult<PurchaseOrder>> DecrementDraftCount(string poNumber)
+    {
+        try
+        {
+            _logger.LogInformation("Decrementing draft count for purchase order: {PONumber}", poNumber);
+            
+            var updatedPO = await _purchaseOrderService.DecrementDraftCountAsync(poNumber);
+            
+            if (updatedPO == null)
+            {
+                return NotFound($"Purchase order {poNumber} not found");
+            }
+            
+            return Ok(updatedPO);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error decrementing draft count for purchase order {PONumber}", poNumber);
+            return StatusCode(500, "An error occurred while updating the purchase order draft count");
+        }
+    }
 }
