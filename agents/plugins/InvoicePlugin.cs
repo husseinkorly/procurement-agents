@@ -322,15 +322,15 @@ public class InvoicePlugin
             // Assign an approver based on total amount (this logic could be more complex in real systems)
             if (invoiceTemplate.Total <= 10000)
             {
-                invoiceTemplate.Approver = "JuniorApprover";
+                invoiceTemplate.Approver = "Michael Chen";
             }
             else if (invoiceTemplate.Total <= 50000)
             {
-                invoiceTemplate.Approver = "SeniorApprover";
+                invoiceTemplate.Approver = "David Rodriguez";
             }
             else
             {
-                invoiceTemplate.Approver = "ExecutiveApprover";
+                invoiceTemplate.Approver = "Emily Wilson";
             }
             
             // Create the invoice via POST to the invoice API
@@ -471,15 +471,15 @@ public class InvoicePlugin
             // Assign an approver based on total amount (this logic could be more complex in real systems)
             if (invoice.Total <= 10000)
             {
-                invoice.Approver = "JuniorApprover";
+                invoice.Approver = ""Michael Chen";
             }
             else if (invoice.Total <= 50000)
             {
-                invoice.Approver = "SeniorApprover";
+                invoice.Approver = "David Rodriguez";
             }
             else
             {
-                invoice.Approver = "ExecutiveApprover";
+                invoice.Approver = "Emily Wilson";
             }
 
             // Generate a unique invoice number
