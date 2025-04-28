@@ -170,17 +170,6 @@ KernelFunction selectionFunction =
         """,
         safeParameterNames: "history");
 
-KernelFunction terminationFunction =
-    AgentGroupChat.CreatePromptFunctionForStrategy(
-        $$$"""
-        Examine the TODO and determine whether there are any remaining tasks to be completed.
-        If agents requesting user's input, keep the conversation going.
-        If agents not waiting for user's input and there is no items in TODO, terminate the conversation.
-
-        TODO:
-        {{$todo}}
-        """,
-        safeParameterNames: "todo");
 #pragma warning disable SKEXP0001
 KernelFunctionSelectionStrategy selectionStrategy =
   new(selectionFunction, kernel)
@@ -193,23 +182,13 @@ KernelFunctionSelectionStrategy selectionStrategy =
       HistoryReducer = new ChatHistoryTruncationReducer(20),
   };
 
-KernelFunctionTerminationStrategy terminationStrategy =
-  new(terminationFunction, kernel)
-  {
-      // The prompt variable name for the history argument.
-      HistoryVariableName = "todo",
-      // Save tokens by not including the entire history in the prompt
-      HistoryReducer = new ChatHistoryTruncationReducer(10),
-  };
-
 // Configure Agent Group Chat
 #pragma warning disable SKEXP0110
 AgentGroupChat chat = new(invoiceAgent, approvalAgent, goodReceivedAgent, purchaseOrderAgent, safeLimitAgent)
 {
     ExecutionSettings = new()
     {
-        SelectionStrategy = selectionStrategy,
-        //TerminationStrategy = terminationStrategy
+        SelectionStrategy = selectionStrategy
     }
 };
 
