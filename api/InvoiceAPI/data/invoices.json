@@ -252,31 +252,6 @@
       "Total": 1353.55,
       "Currency": "USD",
       "Status": "Draft"
-    },
-    {
-      "InvoiceNumber": "573400864",
-      "PurchaseOrderNumber": "5100063118",
-      "SupplierName": "Zones, Inc.",
-      "SupplierId": "0003014194",
-      "InvoiceDate": "2025-04-25",
-      "DueDate": "2025-05-27",
-      "Approver": "Michael Chen",
-      "AutoCore": true,
-      "LineItems": [
-        {
-          "ItemId": "10",
-          "Description": "Description: Surface Laptop 7",
-          "Quantity": 1,
-          "UnitPrice": 1129.65,
-          "TotalPrice": 1129.65
-        }
-      ],
-      "Subtotal": 1129.65,
-      "Tax": 17.19,
-      "Shipping": 12.5,
-      "Total": 1159.34,
-      "Currency": "USD",
-      "Status": "Pending Approval"
     }
   ]
 }
