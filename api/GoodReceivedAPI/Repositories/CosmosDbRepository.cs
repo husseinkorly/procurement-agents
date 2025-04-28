@@ -58,7 +58,7 @@ namespace GoodReceivedAPI.Repositories
         /// <summary>
         /// Get an item by its ID and partition key
         /// </summary>
-        public async Task<T> GetByIdAsync(string id, string partitionKey)
+        public async Task<T?> GetByIdAsync(string id, string partitionKey)
         {
             try
             {

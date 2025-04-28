@@ -14,7 +14,7 @@ public class GoodsReceivedService
         PropertyNameCaseInsensitive = true,
         PropertyNamingPolicy = null
     };
-    private List<GoodsReceivedItem> _goodsItems = []; // In-memory cache
+    private List<GoodsReceivedItem> _goodsItems = [];
 
     public GoodsReceivedService(
         ICosmosDbRepository<GoodsReceivedItem> goodsRepository,
@@ -23,7 +23,7 @@ public class GoodsReceivedService
     {
         _goodsRepository = goodsRepository;
         _logger = logger;
-        
+
         // Initialize and load goods received items asynchronously
         InitializeRepositoryAndLoadItems().GetAwaiter().GetResult();
     }
@@ -35,7 +35,7 @@ public class GoodsReceivedService
         {
             // Initialize the repository (create database and container if they don't exist)
             await _goodsRepository.InitializeAsync();
-            
+
             // Load all goods received items from Cosmos DB to in-memory cache
             _goodsItems = (await _goodsRepository.GetAllAsync()).ToList();
             _logger.LogInformation("Loaded {Count} goods received items from Cosmos DB", _goodsItems.Count);
@@ -53,10 +53,10 @@ public class GoodsReceivedService
     {
         var goodsItems = _goodsItems.Where(g => g.PurchaseOrderNumber != null &&
             g.PurchaseOrderNumber.Equals(poNumber, StringComparison.OrdinalIgnoreCase));
-            
+
         if (itemId != null)
         {
-            goodsItems = goodsItems.Where(g => g.ItemId != null && 
+            goodsItems = goodsItems.Where(g => g.ItemId != null &&
                 g.ItemId.Equals(itemId, StringComparison.OrdinalIgnoreCase));
         }
 
@@ -68,15 +68,11 @@ public class GoodsReceivedService
     {
         try
         {
-            // Set LastModified timestamp
-            item.LastModified = DateTime.UtcNow;
-            
             // Create in Cosmos DB
             var createdItem = await _goodsRepository.CreateAsync(item);
-            
             // Add to in-memory cache
             _goodsItems.Add(createdItem);
-            
+
             return createdItem;
         }
         catch (Exception ex)
@@ -88,13 +84,13 @@ public class GoodsReceivedService
 
     // Update a goods received item
     public async Task<GoodsReceivedItem?> UpdateGoodsReceivedAsync(
-        string poNumber, string itemId, string serialNumber, 
+        string poNumber, string itemId, string serialNumber,
         string assetTagNumber, string status)
     {
         try
         {
             // Find if there's an existing entry
-            var existingItem = _goodsItems.FirstOrDefault(g => 
+            var existingItem = _goodsItems.FirstOrDefault(g =>
                 g.PurchaseOrderNumber != null && g.PurchaseOrderNumber.Equals(poNumber, StringComparison.OrdinalIgnoreCase) &&
                 g.ItemId != null && g.ItemId.Equals(itemId, StringComparison.OrdinalIgnoreCase));
 
@@ -104,24 +100,25 @@ public class GoodsReceivedService
                 existingItem.SerialNumber = serialNumber;
                 existingItem.AssetTagNumber = assetTagNumber;
                 existingItem.Status = status;
-                existingItem.ReceivedDate = status.Equals("Received", StringComparison.OrdinalIgnoreCase) 
-                    ? DateTime.Now.ToString("yyyy-MM-dd") 
+                existingItem.id = Guid.NewGuid().ToString();
+                existingItem.ReceivedDate = status.Equals("Received", StringComparison.OrdinalIgnoreCase)
+                    ? DateTime.Now.ToString("yyyy-MM-dd")
                     : null;
-                existingItem.LastModified = DateTime.UtcNow;
-                
+
                 // Update in Cosmos DB
                 var updatedItem = await _goodsRepository.UpdateAsync(
-                    existingItem, 
-                    existingItem.Id, 
-                    existingItem.PurchaseOrderNumber);
-                
+                    existingItem,
+                    existingItem.id,
+                    existingItem.PurchaseOrderNumber ?? string.Empty);
+
                 // Update in-memory cache
-                var index = _goodsItems.FindIndex(i => i.Id == existingItem.Id);
+                var index = _goodsItems.FindIndex(i => i.PurchaseOrderNumber == existingItem.PurchaseOrderNumber &&
+                    i.ItemId == existingItem.ItemId);
                 if (index >= 0)
                 {
                     _goodsItems[index] = updatedItem;
                 }
-                
+
                 return updatedItem;
             }
 

@@ -10,7 +10,7 @@ namespace GoodReceivedAPI.Repositories
         /// <summary>
         /// Get an item by its ID and partition key
         /// </summary>
-        Task<T> GetByIdAsync(string id, string partitionKey);
+        Task<T?> GetByIdAsync(string id, string partitionKey);
         
         /// <summary>
         /// Get all items, optionally filtered by a SQL query

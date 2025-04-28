@@ -50,7 +50,7 @@ public class Program
         builder.Services.AddSingleton(serviceProvider =>
         {
             var logger = serviceProvider.GetRequiredService<ILogger<CosmosClient>>();
-            
+
             // Configure Cosmos Client options for resilient connections
             var options = new CosmosClientOptions
             {
@@ -64,7 +64,7 @@ public class Program
             };
 
             logger.LogInformation("Initializing Cosmos DB client with endpoint {Endpoint}", cosmosDbOptions.EndpointUri);
-            
+
             return new CosmosClient(
                 cosmosDbOptions.EndpointUri,
                 cosmosDbOptions.PrimaryKey,
@@ -76,11 +76,11 @@ public class Program
         {
             var cosmosClient = serviceProvider.GetRequiredService<CosmosClient>();
             var logger = serviceProvider.GetRequiredService<ILogger<CosmosDbRepository<GoodsReceivedItem>>>();
-            
+
             return new CosmosDbRepository<GoodsReceivedItem>(
                 cosmosClient,
-                cosmosDbOptions.DatabaseName,
-                cosmosDbOptions.ContainerName,
+                cosmosDbOptions.DatabaseName ?? throw new ArgumentNullException(nameof(cosmosDbOptions.DatabaseName)),
+                cosmosDbOptions.ContainerName ?? throw new ArgumentNullException(nameof(cosmosDbOptions.ContainerName)),
                 logger);
         });
 
