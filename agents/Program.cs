@@ -86,8 +86,8 @@ ChatCompletionAgent invoiceAgent = new()
                                 - Generte the invoice template from given PO number
                                 - if the user asks an update for the templete, then update the invoice template with the given information
                                 - always use the latest invoice generated template.
-                                - confirm the invoice with the user, and then creating it.
-                            
+                                - always confirm the invoice with the user, and then creating it.
+
                             - always return your response in a nice HTML format including data table.
                         """,
     Kernel = kernel,
@@ -140,7 +140,6 @@ ChatCompletionAgent purchaseOrderAgent = new()
                         - getting purchase order details for a specific purchase order number.
                         - getting all purchase orders with optional filtering by status (Open or Closed).
                         - updating purchase order details for a specific purchase order number after the invoice agent creates an invoice for it.
-
                         
                         return your response in HTML format and incluude a summary of what you did.
                         """,

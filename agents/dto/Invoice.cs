@@ -7,6 +7,9 @@ public class Invoice
     [JsonPropertyName("invoiceNumber")]
     public string? InvoiceNumber { get; set; }
 
+    [JsonPropertyName("microsoftInvoiceNumber")]
+    public string? MicrosoftInvoiceNumber { get; set; }
+
     [JsonPropertyName("PurchaseOrderNumber")]
     public string? PurchaseOrderNumber { get; set; }
 
@@ -24,7 +27,7 @@ public class Invoice
 
     [JsonPropertyName("approver")]
     public string? Approver { get; set; }
-    
+
     [JsonPropertyName("autoCore")]
     public bool AutoCore { get; set; }
 
