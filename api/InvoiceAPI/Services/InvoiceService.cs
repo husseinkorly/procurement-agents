@@ -77,6 +77,17 @@ public class InvoiceService
         return _invoices;
     }
 
+    // Get invoices by purchase order and status
+    public List<Invoice> GetInvoicesByPOAndStatus(string purchaseOrderNumber, string status)
+    {
+        return _invoices.Where(i => 
+            i.PurchaseOrderNumber != null && 
+            i.PurchaseOrderNumber.Equals(purchaseOrderNumber, StringComparison.OrdinalIgnoreCase) &&
+            i.Status != null &&
+            i.Status.Equals(status, StringComparison.OrdinalIgnoreCase)
+        ).ToList();
+    }
+
     // Get invoices with specific status
     public List<Invoice> GetInvoicesByStatus(string status)
     {
@@ -169,6 +180,24 @@ public class InvoiceService
         }
     }
 
+    // Delete an invoice by number
+    public async Task<bool> DeleteInvoiceAsync(string invoiceNumber)
+    {
+        var invoice = GetInvoiceByNumber(invoiceNumber);
+
+        if (invoice == null)
+        {
+            return false;
+        }
+
+        // Remove the invoice from the list
+        _invoices.Remove(invoice);
+
+        // Save the updated invoice list
+        await SaveInvoicesToFile();
+
+        return true;
+    }
     // Update invoice status
     public async Task<Invoice?> UpdateInvoiceStatusAsync(string invoiceNumber, string status, string updatedBy)
     {

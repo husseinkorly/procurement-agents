@@ -63,6 +63,14 @@
       "Action": "Approved",
       "Timestamp": "2025-04-25T20:27:49.607896+00:00",
       "Comments": null
+    },
+    {
+      "Id": "57a8f223-7df6-415f-8b7a-cba4c584fbe0",
+      "InvoiceNumber": "INV-20250426-System.Random",
+      "ApproverName": "JuniorApprover",
+      "Action": "Approved",
+      "Timestamp": "2025-04-26T18:24:19.8840863+00:00",
+      "Comments": null
     }
   ]
 }

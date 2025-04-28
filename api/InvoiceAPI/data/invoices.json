@@ -1,324 +1,257 @@
 {
   "Invoices": [
     {
-      "InvoiceNumber": "INV-2025-0001",
-      "PurchaseOrderNumber": "PO-2025-1234",
-      "SupplierName": "Office Supplies Inc.",
-      "SupplierId": "SUP001",
+      "InvoiceNumber": "5734001342",
+      "PurchaseOrderNumber": "5100063118",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
       "InvoiceDate": "2025-03-15",
       "DueDate": "2025-04-15",
       "Approver": "Sarah Johnson",
       "AutoCore": true,
       "LineItems": [
         {
-          "ItemId": "ITEM001",
-          "Description": "Premium Paper (Letter Size, 500 sheets)",
-          "Quantity": 10,
-          "UnitPrice": 8.99,
-          "TotalPrice": 89.9
-        },
-        {
-          "ItemId": "ITEM002",
-          "Description": "Ink Cartridges (Black)",
-          "Quantity": 5,
-          "UnitPrice": 24.99,
-          "TotalPrice": 124.95
+          "ItemId": "10",
+          "Description": "Description: Surface Laptop 7",
+          "Quantity": 1,
+          "UnitPrice": 1129.65,
+          "TotalPrice": 1129.65
         }
       ],
-      "Subtotal": 214.85,
+      "Subtotal": 1129.65,
       "Tax": 17.19,
-      "Shipping": 12.5,
-      "Total": 244.54,
+      "Shipping": 12.50,
+      "Total": 1159.34,
       "Currency": "USD",
-      "Status": "Approved"
+      "Status": "Pending Approval"
     },
     {
-      "InvoiceNumber": "INV-2025-0002",
-      "PurchaseOrderNumber": "PO-2025-1456",
-      "SupplierName": "Tech Solutions",
-      "SupplierId": "SUP002",
+      "InvoiceNumber": "5734001876",
+      "PurchaseOrderNumber": "5100063064",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
       "InvoiceDate": "2025-02-28",
       "DueDate": "2025-03-31",
       "Approver": "Michael Chen",
-      "AutoCore": false,
+      "AutoCore": true,
       "LineItems": [
         {
-          "ItemId": "TS001",
-          "Description": "Monitor - 27 4K UHD",
-          "Quantity": 2,
-          "UnitPrice": 349.99,
-          "TotalPrice": 699.98
-        },
-        {
-          "ItemId": "TS002",
-          "Description": "Wireless Keyboard and Mouse Combo",
-          "Quantity": 3,
-          "UnitPrice": 79.99,
-          "TotalPrice": 239.97
+          "ItemId": "10",
+          "Description": "Description: Surface Laptop 7",
+          "Quantity": 1,
+          "UnitPrice": 1181.60,
+          "TotalPrice": 1181.60
         }
       ],
-      "Subtotal": 939.95,
-      "Tax": 75.2,
-      "Shipping": 0,
-      "Total": 1015.15,
+      "Subtotal": 1181.60,
+      "Tax": 10.00,
+      "Shipping": 5.00,
+      "Total": 1196.60,
       "Currency": "USD",
-      "Status": "Approved"
+      "Status": "Pending Approval"
     },
     {
-      "InvoiceNumber": "INV-2025-0003",
-      "PurchaseOrderNumber": "PO-2025-2157",
-      "SupplierName": "Maintenance Services",
-      "SupplierId": "SUP003",
+      "InvoiceNumber": "5734001529",
+      "PurchaseOrderNumber": "5100062269",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
       "InvoiceDate": "2025-03-25",
       "DueDate": "2025-04-25",
       "Approver": "David Rodriguez",
       "AutoCore": true,
       "LineItems": [
         {
-          "ItemId": "SVC001",
-          "Description": "Quarterly HVAC Maintenance",
+          "ItemId": "10",
+          "Description": "Description: AppleCare for Enterprise 16-inch MacBook Pro (M3) 48",
           "Quantity": 1,
-          "UnitPrice": 1250,
-          "TotalPrice": 1250
+          "UnitPrice": 239.00,
+          "TotalPrice": 239.00
         },
         {
-          "ItemId": "SVC002",
-          "Description": "Emergency Plumbing Repair",
+          "ItemId": "20",
+          "Description": "Description: 16-INCH MACBOOK PRO APPLE M4 MAX CHIP WITH 14 CORE CPU",
           "Quantity": 1,
-          "UnitPrice": 450,
-          "TotalPrice": 450
+          "UnitPrice": 3250.99,
+          "TotalPrice": 3250.99
+        },
+        {
+          "ItemId": "30",
+          "Description": "Description: WP - MS Asset Tag and ReportManufacturer Part: 28641",
+          "Quantity": 1,
+          "UnitPrice": 5.00,
+          "TotalPrice": 5.00
         }
       ],
-      "Subtotal": 1700,
-      "Tax": 136,
-      "Shipping": 0,
-      "Total": 1836,
+      "Subtotal": 3494.99,
+      "Tax": 136.00,
+      "Shipping": 30.00,
+      "Total": 3660.99,
       "Currency": "USD",
       "Status": "Paid"
     },
     {
-      "InvoiceNumber": "INV-2025-0004",
-      "PurchaseOrderNumber": "PO-2025-3289",
-      "SupplierName": "Catering Express",
-      "SupplierId": "SUP004",
+      "InvoiceNumber": "5734001194",
+      "PurchaseOrderNumber": "0101321275",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
       "InvoiceDate": "2025-03-30",
       "DueDate": "2025-04-30",
       "Approver": "Emily Wilson",
       "AutoCore": false,
       "LineItems": [
         {
-          "ItemId": "CAT001",
-          "Description": "Executive Lunch Meeting (25 people)",
-          "Quantity": 1,
-          "UnitPrice": 625,
-          "TotalPrice": 625
-        },
-        {
-          "ItemId": "CAT002",
-          "Description": "Coffee and Refreshments Service",
-          "Quantity": 2,
-          "UnitPrice": 175,
-          "TotalPrice": 350
+          "ItemId": "10",
+          "Description": "Description: Logitech USB Headset H570e",
+          "Quantity": 20,
+          "UnitPrice": 41.00,
+          "TotalPrice": 820.00
         }
       ],
-      "Subtotal": 975,
-      "Tax": 87.75,
-      "Shipping": 25,
-      "Total": 1087.75,
+      "Subtotal": 820.00,
+      "Tax": 85.83,
+      "Shipping": 13.32,
+      "Total": 919.15,
       "Currency": "USD",
       "Status": "Pending Approval"
     },
     {
-      "InvoiceNumber": "INV-2025-0005",
-      "PurchaseOrderNumber": "PO-2025-4002",
-      "SupplierName": "Consulting Partners",
-      "SupplierId": "SUP005",
+      "InvoiceNumber": "5734001703",
+      "PurchaseOrderNumber": "0101321049",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
       "InvoiceDate": "2025-02-15",
       "DueDate": "2025-03-17",
       "Approver": "Sarah Johnson",
       "AutoCore": true,
       "LineItems": [
         {
-          "ItemId": "CONS001",
-          "Description": "Strategic Planning Workshop",
+          "ItemId": "20",
+          "Description": "Computer",
           "Quantity": 1,
-          "UnitPrice": 5000,
-          "TotalPrice": 5000
-        },
-        {
-          "ItemId": "CONS002",
-          "Description": "Market Analysis Report",
-          "Quantity": 1,
-          "UnitPrice": 3500,
-          "TotalPrice": 3500
+          "UnitPrice": 5000.00,
+          "TotalPrice": 5000.00
         }
       ],
-      "Subtotal": 8500,
-      "Tax": 680,
-      "Shipping": 0,
-      "Total": 9180,
+      "Subtotal": 5000.00,
+      "Tax": 100.00,
+      "Shipping": 20.00,
+      "Total": 5120.00,
       "Currency": "USD",
       "Status": "Rejected"
     },
     {
-      "InvoiceNumber": "INV-20250423-PO-2025-6249",
-      "PurchaseOrderNumber": "PO-2025-6249",
-      "SupplierName": "IT Solutions Provider",
-      "SupplierId": "SUP007",
-      "InvoiceDate": "2025-04-23",
-      "DueDate": "2025-05-23",
-      "Approver": "SeniorApprover",
+      "InvoiceNumber": "DRAFT-846267722",
+      "PurchaseOrderNumber": "5100063064",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "InvoiceDate": "2025-04-26",
+      "DueDate": "2025-05-27",
+      "Approver": null,
+      "AutoCore": true,
+      "LineItems": [
+        {
+          "ItemId": "10",
+          "Description": "Description: Surface Laptop 7",
+          "Quantity": 1,
+          "UnitPrice": 1181.6,
+          "TotalPrice": 1181.6
+        }
+      ],
+      "Subtotal": 1181.6,
+      "Tax": 10,
+      "Shipping": 5,
+      "Total": 1196.6,
+      "Currency": "USD",
+      "Status": "Draft"
+    },
+    {
+      "InvoiceNumber": "DRAFT-537164252",
+      "PurchaseOrderNumber": "5100062269",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "InvoiceDate": "2025-04-26",
+      "DueDate": "2025-05-27",
+      "Approver": null,
+      "AutoCore": true,
+      "LineItems": [
+        {
+          "ItemId": "10",
+          "Description": "Description: AppleCare for Enterprise 16-inch MacBook Pro (M3) 48",
+          "Quantity": 1,
+          "UnitPrice": 239,
+          "TotalPrice": 239
+        },
+        {
+          "ItemId": "20",
+          "Description": "Description: 16-INCH MACBOOK PRO APPLE M4 MAX CHIP WITH 14 CORE CPU",
+          "Quantity": 1,
+          "UnitPrice": 3250.99,
+          "TotalPrice": 3250.99
+        },
+        {
+          "ItemId": "30",
+          "Description": "DDescription: WP - MS Asset Tag and ReportManufacturer Part: 28641",
+          "Quantity": 1,
+          "UnitPrice": 5,
+          "TotalPrice": 5
+        }
+      ],
+      "Subtotal": 3494.99,
+      "Tax": 136,
+      "Shipping": 30,
+      "Total": 3660.99,
+      "Currency": "USD",
+      "Status": "Draft"
+    },
+    {
+      "InvoiceNumber": "DRAFT-422194318",
+      "PurchaseOrderNumber": "0101321275",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "InvoiceDate": "2025-04-26",
+      "DueDate": "2025-05-27",
+      "Approver": null,
       "AutoCore": false,
       "LineItems": [
         {
-          "ItemId": "SW001",
-          "Description": "Enterprise Software License (Annual)",
-          "Quantity": 50,
-          "UnitPrice": 120,
-          "TotalPrice": 6000
-        },
-        {
-          "ItemId": "HW001",
-          "Description": "Server Hardware - Rack Mount",
-          "Quantity": 2,
-          "UnitPrice": 2500,
-          "TotalPrice": 5000
+          "ItemId": "10",
+          "Description": "Description: Logitech USB Headset H570e",
+          "Quantity": 20,
+          "UnitPrice": 41,
+          "TotalPrice": 820
         }
       ],
-      "Subtotal": 11000,
-      "Tax": 880,
-      "Shipping": 0,
-      "Total": 11880,
+      "Subtotal": 820,
+      "Tax": 85.83,
+      "Shipping": 13.32,
+      "Total": 919.15,
       "Currency": "USD",
-      "Status": "Pending Approval"
+      "Status": "Draft"
     },
     {
-      "InvoiceNumber": "INV-20250424-PO-2025-1234",
-      "PurchaseOrderNumber": "PO-2025-1234",
-      "SupplierName": "Office Supplies Inc.",
-      "SupplierId": "SUP001",
-      "InvoiceDate": "2025-04-24",
-      "DueDate": "2025-05-24",
-      "Approver": "JuniorApprover",
+      "InvoiceNumber": "DRAFT-559728136",
+      "PurchaseOrderNumber": "0101313516",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "InvoiceDate": "2025-04-26",
+      "DueDate": "2025-05-27",
+      "Approver": null,
       "AutoCore": true,
       "LineItems": [
         {
-          "ItemId": "ITEM001",
-          "Description": "Premium Paper (Letter Size, 500 sheets)",
-          "Quantity": 10,
-          "UnitPrice": 8.99,
-          "TotalPrice": 89.9
-        },
-        {
-          "ItemId": "ITEM002",
-          "Description": "Ink Cartridges (Black)",
-          "Quantity": 5,
-          "UnitPrice": 24.99,
-          "TotalPrice": 124.95
-        }
-      ],
-      "Subtotal": 214.85,
-      "Tax": 17.19,
-      "Shipping": 12.5,
-      "Total": 244.54,
-      "Currency": "USD",
-      "Status": "Pending Approval"
-    },
-    {
-      "InvoiceNumber": "INV-20250424-PO-2025-3289",
-      "PurchaseOrderNumber": "PO-2025-3289",
-      "SupplierName": "Catering Express",
-      "SupplierId": "SUP004",
-      "InvoiceDate": "2025-04-24",
-      "DueDate": "2025-05-24",
-      "Approver": "JuniorApprover",
-      "AutoCore": false,
-      "LineItems": [
-        {
-          "ItemId": "CAT001",
-          "Description": "Executive Lunch Meeting (25 people)",
+          "ItemId": "10",
+          "Description": "Description: NH Laptop 7 13.8in Intel/32GB/1TB SSD",
           "Quantity": 1,
-          "UnitPrice": 625,
-          "TotalPrice": 625
-        },
-        {
-          "ItemId": "CAT002",
-          "Description": "Coffee and Refreshments Service",
-          "Quantity": 2,
-          "UnitPrice": 175,
-          "TotalPrice": 350
+          "UnitPrice": 1233.55,
+          "TotalPrice": 1233.55
         }
       ],
-      "Subtotal": 975,
-      "Tax": 87.75,
-      "Shipping": 25,
-      "Total": 1087.75,
+      "Subtotal": 1233.55,
+      "Tax": 100,
+      "Shipping": 20,
+      "Total": 1353.55,
       "Currency": "USD",
-      "Status": "Pending Approval"
-    },
-    {
-      "InvoiceNumber": "INV-20250424-PO-2025-4002",
-      "PurchaseOrderNumber": "PO-2025-4002",
-      "SupplierName": "Consulting Partners",
-      "SupplierId": "SUP005",
-      "InvoiceDate": "2025-04-24",
-      "DueDate": "2025-05-24",
-      "Approver": "JuniorApprover",
-      "AutoCore": true,
-      "LineItems": [
-        {
-          "ItemId": "CONS001",
-          "Description": "Strategic Planning Workshop",
-          "Quantity": 1,
-          "UnitPrice": 5000,
-          "TotalPrice": 5000
-        },
-        {
-          "ItemId": "CONS002",
-          "Description": "Market Analysis Report",
-          "Quantity": 1,
-          "UnitPrice": 3500,
-          "TotalPrice": 3500
-        }
-      ],
-      "Subtotal": 8500,
-      "Tax": 680,
-      "Shipping": 0,
-      "Total": 9180,
-      "Currency": "USD",
-      "Status": "Pending Approval"
-    },
-    {
-      "InvoiceNumber": "INV-20250425-PO-2025-1234",
-      "PurchaseOrderNumber": "PO-2025-1234",
-      "SupplierName": "Office Supplies Inc.",
-      "SupplierId": "SUP001",
-      "InvoiceDate": "2025-04-24",
-      "DueDate": "2025-05-25",
-      "Approver": "JuniorApprover",
-      "AutoCore": true,
-      "LineItems": [
-        {
-          "ItemId": "ITEM001",
-          "Description": "Premium Paper (Letter Size, 500 sheets)",
-          "Quantity": 10,
-          "UnitPrice": 8.99,
-          "TotalPrice": 89.9
-        },
-        {
-          "ItemId": "ITEM002",
-          "Description": "Ink Cartridges (Black)",
-          "Quantity": 5,
-          "UnitPrice": 24.99,
-          "TotalPrice": 124.95
-        }
-      ],
-      "Subtotal": 214.85,
-      "Tax": 17.19,
-      "Shipping": 12.5,
-      "Total": 244.54,
-      "Currency": "USD",
-      "Status": "Approved"
+      "Status": "Draft"
     }
   ]
 }

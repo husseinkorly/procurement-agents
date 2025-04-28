@@ -4,57 +4,57 @@
       "SerialNumber": "SN12345",
       "AssetTagNumber": "AT-9876",
       "Status": "Received",
-      "PurchaseOrderNumber": "PO-2025-1234",
-      "ItemId": "ITEM001",
+      "PurchaseOrderNumber": "5100063118",
+      "ItemId": "10",
       "ReceivedDate": "2025-03-18"
     },
     {
       "SerialNumber": "SN234923847",
       "AssetTagNumber": "AT234293847",
       "Status": "Received",
-      "PurchaseOrderNumber": "PO-2025-1234",
-      "ItemId": "ITEM002",
+      "PurchaseOrderNumber": "5100063064",
+      "ItemId": "10",
       "ReceivedDate": "2025-04-22"
     },
     {
       "SerialNumber": "SN24680",
       "AssetTagNumber": "AT-1357",
       "Status": "Received",
-      "PurchaseOrderNumber": "PO-2025-1456",
-      "ItemId": "TS001",
+      "PurchaseOrderNumber": "5100062269",
+      "ItemId": "10",
       "ReceivedDate": "2025-03-03"
     },
     {
       "SerialNumber": "SN13579",
       "AssetTagNumber": "AT-2468",
       "Status": "Received",
-      "PurchaseOrderNumber": "PO-2025-1456",
-      "ItemId": "TS002",
+      "PurchaseOrderNumber": "5100062269",
+      "ItemId": "20",
       "ReceivedDate": "2025-03-03"
     },
     {
       "SerialNumber": "SN11111",
       "AssetTagNumber": "AT-22222",
       "Status": "Received",
-      "PurchaseOrderNumber": "PO-2025-2157",
-      "ItemId": "SVC001",
+      "PurchaseOrderNumber": "5100062269",
+      "ItemId": "30",
       "ReceivedDate": "2025-03-27"
     },
     {
       "SerialNumber": "SN22222",
       "AssetTagNumber": "AT-33333",
-      "Status": "Not Received",
-      "PurchaseOrderNumber": "PO-2025-2157",
-      "ItemId": "SVC002",
-      "ReceivedDate": ""
+      "Status": "Received",
+      "PurchaseOrderNumber": "0101321275",
+      "ItemId": "10",
+      "ReceivedDate": "2025-03-27"
     },
     {
       "SerialNumber": "SN33333",
       "AssetTagNumber": "AT-44444",
-      "Status": "Received",
-      "PurchaseOrderNumber": "PO-2025-3289",
-      "ItemId": "CAT001",
-      "ReceivedDate": "2025-03-28"
+      "Status": "Not Received",
+      "PurchaseOrderNumber": "0101313516",
+      "ItemId": "10",
+      "ReceivedDate": ""
     },
     {
       "SerialNumber": "N/A",
@@ -68,8 +68,8 @@
       "SerialNumber": "SN55555",
       "AssetTagNumber": "AT-66666",
       "Status": "Received",
-      "PurchaseOrderNumber": "PO-2025-4002",
-      "ItemId": "CONS001",
+      "PurchaseOrderNumber": "0101320993",
+      "ItemId": "10",
       "ReceivedDate": "2025-02-10"
     },
     {

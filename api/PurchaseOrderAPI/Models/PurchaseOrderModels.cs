@@ -7,7 +7,6 @@ public class PurchaseOrderLineItem
     public int Quantity { get; set; }
     public decimal UnitPrice { get; set; }
     public decimal TotalPrice { get; set; }
-    public string? Status { get; set; }
 }
 
 public class PurchaseOrder
@@ -28,6 +27,7 @@ public class PurchaseOrder
     public string? Status { get; set; }
     public string? RequestorName { get; set; }
     public string? ApprovalDate { get; set; }
+    public int Drafts { get; set; }
 }
 
 public class PurchaseOrderDatabase

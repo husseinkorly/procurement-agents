@@ -1,235 +1,200 @@
 {
-  "purchaseOrders": [
+  "PurchaseOrders": [
     {
-      "purchaseOrderNumber": "PO-2025-1234",
-      "supplierName": "Office Supplies Inc.",
-      "supplierId": "SUP001",
-      "orderDate": "2025-02-15",
-      "expectedDeliveryDate": "2025-03-15",
-      "shippingAddress": "123 Corporate Plaza, Suite 500, New York, NY 10001",
-      "autoCore": true,
-      "lineItems": [
+      "PurchaseOrderNumber": "5100063118",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "OrderDate": "2025-02-15",
+      "ExpectedDeliveryDate": "2025-03-15",
+      "ShippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
+      "AutoCore": true,
+      "LineItems": [
         {
-          "itemId": "ITEM001",
-          "description": "Premium Paper (Letter Size, 500 sheets)",
-          "quantity": 10,
-          "unitPrice": 8.99,
-          "totalPrice": 89.90
-        },
-        {
-          "itemId": "ITEM002",
-          "description": "Ink Cartridges (Black)",
-          "quantity": 5,
-          "unitPrice": 24.99,
-          "totalPrice": 124.95
+          "ItemId": "10",
+          "Description": "Description: Surface Laptop 7",
+          "Quantity": 1,
+          "UnitPrice": 1129.65,
+          "TotalPrice": 1129.65
         }
       ],
-      "subtotal": 214.85,
-      "tax": 17.19,
-      "shipping": 12.50,
-      "total": 244.54,
-      "currency": "USD",
-      "status": "Open",
-      "requestorName": "John Smith",
-      "approvalDate": "2025-02-18"
+      "Subtotal": 1129.65,
+      "Tax": 17.19,
+      "Shipping": 12.50,
+      "Total": 1159.34,
+      "Currency": "USD",
+      "Status": "Open",
+      "RequestorName": "John Smith",
+      "ApprovalDate": "null"
     },
     {
-      "purchaseOrderNumber": "PO-2025-1456",
-      "supplierName": "Tech Solutions",
-      "supplierId": "SUP002",
-      "orderDate": "2025-02-01",
-      "expectedDeliveryDate": "2025-02-28",
-      "shippingAddress": "456 Business Center, Austin, TX 78701",
-      "autoCore": true,
-      "lineItems": [
+      "PurchaseOrderNumber": "5100063064",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "OrderDate": "2025-02-01",
+      "ExpectedDeliveryDate": "2025-02-28",
+      "ShippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
+      "AutoCore": true,
+      "LineItems": [
         {
-          "itemId": "TS001",
-          "description": "Monitor - 27\" 4K UHD",
-          "quantity": 2,
-          "unitPrice": 349.99,
-          "totalPrice": 699.98
-        },
-        {
-          "itemId": "TS002",
-          "description": "Wireless Keyboard and Mouse Combo",
-          "quantity": 3,
-          "unitPrice": 79.99,
-          "totalPrice": 239.97
+          "ItemId": "10",
+          "Description": "Description: Surface Laptop 7",
+          "Quantity": 1,
+          "UnitPrice": 1181.60,
+          "TotalPrice": 1181.60
         }
       ],
-      "subtotal": 939.95,
-      "tax": 75.20,
-      "shipping": 0,
-      "total": 1015.15,
-      "currency": "USD",
-      "status": "Closed",
-      "requestorName": "Sarah Johnson",
-      "approvalDate": "2025-02-05"
+      "Subtotal": 1181.60,
+      "Tax": 10,
+      "Shipping": 5,
+      "Total": 1196.60,
+      "Currency": "USD",
+      "Status": "Open",
+      "RequestorName": "Sarah Johnson",
+      "ApprovalDate": "null"
     },
     {
-      "purchaseOrderNumber": "PO-2025-2157",
-      "supplierName": "Maintenance Services",
-      "supplierId": "SUP003",
-      "orderDate": "2025-03-01",
-      "expectedDeliveryDate": "2025-03-25",
-      "shippingAddress": "789 Corporate Park, Chicago, IL 60601",
-      "autoCore": true,
-      "lineItems": [
+      "PurchaseOrderNumber": "5100062269",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "OrderDate": "2025-03-01",
+      "ExpectedDeliveryDate": "2025-03-25",
+      "ShippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
+      "AutoCore": true,
+      "LineItems": [
         {
-          "itemId": "SVC001",
-          "description": "Quarterly HVAC Maintenance",
-          "quantity": 1,
-          "unitPrice": 1250.00,
-          "totalPrice": 1250.00
+          "ItemId": "10",
+          "Description": "Description: AppleCare for Enterprise 16-inch MacBook Pro (M3) 48",
+          "Quantity": 1,
+          "UnitPrice": 239.00,
+          "TotalPrice": 239.00
         },
         {
-          "itemId": "SVC002",
-          "description": "Emergency Plumbing Repair",
-          "quantity": 1,
-          "unitPrice": 450.00,
-          "totalPrice": 450.00
+          "ItemId": "20",
+          "Description": "Description: 16-INCH MACBOOK PRO APPLE M4 MAX CHIP WITH 14 CORE CPU",
+          "Quantity": 1,
+          "UnitPrice": 3250.99,
+          "TotalPrice": 3250.99
+        },
+        {
+          "ItemId": "30",
+          "Description": "DDescription: WP - MS Asset Tag and ReportManufacturer Part: 28641",
+          "Quantity": 1,
+          "UnitPrice": 5.00,
+          "TotalPrice": 5.00
         }
       ],
-      "subtotal": 1700.00,
-      "tax": 136.00,
-      "shipping": 0,
-      "total": 1836.00,
-      "currency": "USD",
-      "status": "Closed",
-      "requestorName": "Michael Chen",
-      "approvalDate": "2025-03-05"
+      "Subtotal": 3494.99,
+      "Tax": 136.00,
+      "Shipping": 30,
+      "Total": 3660.99,
+      "Currency": "USD",
+      "Status": "Open",
+      "RequestorName": "Michael Chen",
+      "ApprovalDate": "2025-03-05"
     },
     {
-      "purchaseOrderNumber": "PO-2025-3289",
-      "supplierName": "Catering Express",
-      "supplierId": "SUP004",
-      "orderDate": "2025-03-10",
-      "expectedDeliveryDate": "2025-03-30",
-      "shippingAddress": "101 Executive Tower, Seattle, WA 98101",
-      "autoCore": true,
-      "lineItems": [
+      "PurchaseOrderNumber": "0101321275",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "OrderDate": "2025-03-10",
+      "ExpectedDeliveryDate": "2025-03-30",
+      "ShippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
+      "AutoCore": false,
+      "LineItems": [
         {
-          "itemId": "CAT001",
-          "description": "Executive Lunch Meeting (25 people)",
-          "quantity": 1,
-          "unitPrice": 625.00,
-          "totalPrice": 625.00
-        },
-        {
-          "itemId": "CAT002",
-          "description": "Coffee and Refreshments Service",
-          "quantity": 2,
-          "unitPrice": 175.00,
-          "totalPrice": 350.00
+          "ItemId": "10",
+          "Description": "Description: Logitech USB Headset H570e",
+          "Quantity": 20,
+          "UnitPrice": 41.00,
+          "TotalPrice": 820.00
         }
       ],
-      "subtotal": 975.00,
-      "tax": 87.75,
-      "shipping": 25.00,
-      "total": 1087.75,
-      "currency": "USD",
-      "status": "Open",
-      "requestorName": "Emma Wilson",
-      "approvalDate": "2025-03-15"
+      "Subtotal": 820.00,
+      "Tax": 85.83,
+      "Shipping": 13.32,
+      "Total": 919.15,
+      "Currency": "USD",
+      "Status": "Open",
+      "RequestorName": "Emma Wilson",
+      "ApprovalDate": "null"
     },
     {
-      "purchaseOrderNumber": "PO-2025-4002",
-      "supplierName": "Consulting Partners",
-      "supplierId": "SUP005",
-      "orderDate": "2025-01-15",
-      "expectedDeliveryDate": "2025-02-15",
-      "shippingAddress": "555 Strategy Boulevard, San Francisco, CA 94105",
-      "autoCore": true,
-      "lineItems": [
+      "PurchaseOrderNumber": "0101321049",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "OrderDate": "2025-01-15",
+      "ExpectedDeliveryDate": "2025-02-15",
+      "ShippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
+      "AutoCore": true,
+      "LineItems": [
         {
-          "itemId": "CONS001",
-          "description": "Strategic Planning Workshop",
-          "quantity": 1,
-          "unitPrice": 5000.00,
-          "totalPrice": 5000.00
-        },
-        {
-          "itemId": "CONS002",
-          "description": "Market Analysis Report",
-          "quantity": 1,
-          "unitPrice": 3500.00,
-          "totalPrice": 3500.00
+          "ItemId": "20",
+          "Description": "Computer",
+          "Quantity": 1,
+          "UnitPrice": 5000.00,
+          "TotalPrice": 5000.00
         }
       ],
-      "subtotal": 8500.00,
-      "tax": 680.00,
-      "shipping": 0,
-      "total": 9180.00,
-      "currency": "USD",
-      "status": "Open",
-      "requestorName": "David Rodriguez",
-      "approvalDate": "2025-01-20"
+      "Subtotal": 5000.00,
+      "Tax": 100.00,
+      "Shipping": 20,
+      "Total": 5120.00,
+      "Currency": "USD",
+      "Status": "Closed",
+      "RequestorName": "David Rodriguez",
+      "ApprovalDate": "2025-01-20"
     },
     {
-      "purchaseOrderNumber": "PO-2025-5173",
-      "supplierName": "Office Furniture Depot",
-      "supplierId": "SUP006",
-      "orderDate": "2025-03-20",
-      "expectedDeliveryDate": "2025-04-20",
-      "shippingAddress": "222 Corporate Plaza, Suite 500, New York, NY 10001",
-      "autoCore": true,
-      "lineItems": [
+      "PurchaseOrderNumber": "0101320993",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "OrderDate": "2025-03-20",
+      "ExpectedDeliveryDate": "2025-04-20",
+      "ShippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
+      "AutoCore": true,
+      "LineItems": [
         {
-          "itemId": "FRN001",
-          "description": "Ergonomic Office Chair",
-          "quantity": 5,
-          "unitPrice": 299.99,
-          "totalPrice": 1499.95
-        },
-        {
-          "itemId": "FRN002",
-          "description": "Adjustable Standing Desk",
-          "quantity": 3,
-          "unitPrice": 499.99,
-          "totalPrice": 1499.97
+          "ItemId": "10",
+          "Description": "Ergonomic Office Chair",
+          "Quantity": 5,
+          "UnitPrice": 299.99,
+          "TotalPrice": 1499.95
         }
       ],
-      "subtotal": 2999.92,
-      "tax": 240.00,
-      "shipping": 150.00,
-      "total": 3389.92,
-      "currency": "USD",
-      "status": "Open",
-      "requestorName": "Lisa Thompson",
-      "approvalDate": null
+      "Subtotal": 2999.92,
+      "Tax": 240.00,
+      "Shipping": 150.00,
+      "Total": 3389.92,
+      "Currency": "USD",
+      "Status": "Closed",
+      "RequestorName": "Lisa Thompson",
+      "ApprovalDate": "2025-03-25"
     },
     {
-      "purchaseOrderNumber": "PO-2025-6249",
-      "supplierName": "IT Solutions Provider",
-      "supplierId": "SUP007",
-      "orderDate": "2025-04-01",
-      "expectedDeliveryDate": "2025-05-01",
-      "shippingAddress": "888 Tech Avenue, Austin, TX 78701",
-      "autoCore": true,
-      "lineItems": [
+      "PurchaseOrderNumber": "0101313516",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "OrderDate": "2025-04-01",
+      "ExpectedDeliveryDate": "2025-05-01",
+      "ShippingAddress": "Microsoft Corporation - 1010, LEAWOOD, KS : 66209-1906, United States",
+      "AutoCore": true,
+      "LineItems": [
         {
-          "itemId": "SW001",
-          "description": "Enterprise Software License (Annual)",
-          "quantity": 50,
-          "unitPrice": 120.00,
-          "totalPrice": 6000.00
-        },
-        {
-          "itemId": "HW001",
-          "description": "Server Hardware - Rack Mount",
-          "quantity": 2,
-          "unitPrice": 2500.00,
-          "totalPrice": 5000.00
+          "ItemId": "10",
+          "Description": "Description: NH Laptop 7 13.8in Intel/32GB/1TB SSD",
+          "Quantity": 1,
+          "UnitPrice": 1233.55,
+          "TotalPrice": 1233.55
         }
       ],
-      "subtotal": 11000.00,
-      "tax": 880.00,
-      "shipping": 0,
-      "total": 11880.00,
-      "currency": "USD",
-      "status": "Open",
-      "requestorName": "Robert Blake",
-      "approvalDate": null
+      "Subtotal": 1233.55,
+      "Tax": 100,
+      "Shipping": 20,
+      "Total": 1353.55,
+      "Currency": "USD",
+      "Status": "Open",
+      "RequestorName": "Robert Blake",
+      "ApprovalDate": null
     }
   ]
 }
