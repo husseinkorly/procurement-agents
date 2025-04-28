@@ -138,6 +138,145 @@
       "Total": 5120.00,
       "Currency": "USD",
       "Status": "Rejected"
+    },
+    {
+      "InvoiceNumber": "DRAFT-846267722",
+      "PurchaseOrderNumber": "5100063064",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "InvoiceDate": "2025-04-26",
+      "DueDate": "2025-05-27",
+      "Approver": null,
+      "AutoCore": true,
+      "LineItems": [
+        {
+          "ItemId": "10",
+          "Description": "Description: Surface Laptop 7",
+          "Quantity": 1,
+          "UnitPrice": 1181.6,
+          "TotalPrice": 1181.6
+        }
+      ],
+      "Subtotal": 1181.6,
+      "Tax": 10,
+      "Shipping": 5,
+      "Total": 1196.6,
+      "Currency": "USD",
+      "Status": "Draft"
+    },
+    {
+      "InvoiceNumber": "DRAFT-537164252",
+      "PurchaseOrderNumber": "5100062269",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "InvoiceDate": "2025-04-26",
+      "DueDate": "2025-05-27",
+      "Approver": null,
+      "AutoCore": true,
+      "LineItems": [
+        {
+          "ItemId": "10",
+          "Description": "Description: AppleCare for Enterprise 16-inch MacBook Pro (M3) 48",
+          "Quantity": 1,
+          "UnitPrice": 239,
+          "TotalPrice": 239
+        },
+        {
+          "ItemId": "20",
+          "Description": "Description: 16-INCH MACBOOK PRO APPLE M4 MAX CHIP WITH 14 CORE CPU",
+          "Quantity": 1,
+          "UnitPrice": 3250.99,
+          "TotalPrice": 3250.99
+        },
+        {
+          "ItemId": "30",
+          "Description": "DDescription: WP - MS Asset Tag and ReportManufacturer Part: 28641",
+          "Quantity": 1,
+          "UnitPrice": 5,
+          "TotalPrice": 5
+        }
+      ],
+      "Subtotal": 3494.99,
+      "Tax": 136,
+      "Shipping": 30,
+      "Total": 3660.99,
+      "Currency": "USD",
+      "Status": "Draft"
+    },
+    {
+      "InvoiceNumber": "DRAFT-422194318",
+      "PurchaseOrderNumber": "0101321275",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "InvoiceDate": "2025-04-26",
+      "DueDate": "2025-05-27",
+      "Approver": null,
+      "AutoCore": false,
+      "LineItems": [
+        {
+          "ItemId": "10",
+          "Description": "Description: Logitech USB Headset H570e",
+          "Quantity": 20,
+          "UnitPrice": 41,
+          "TotalPrice": 820
+        }
+      ],
+      "Subtotal": 820,
+      "Tax": 85.83,
+      "Shipping": 13.32,
+      "Total": 919.15,
+      "Currency": "USD",
+      "Status": "Draft"
+    },
+    {
+      "InvoiceNumber": "DRAFT-559728136",
+      "PurchaseOrderNumber": "0101313516",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "InvoiceDate": "2025-04-26",
+      "DueDate": "2025-05-27",
+      "Approver": null,
+      "AutoCore": true,
+      "LineItems": [
+        {
+          "ItemId": "10",
+          "Description": "Description: NH Laptop 7 13.8in Intel/32GB/1TB SSD",
+          "Quantity": 1,
+          "UnitPrice": 1233.55,
+          "TotalPrice": 1233.55
+        }
+      ],
+      "Subtotal": 1233.55,
+      "Tax": 100,
+      "Shipping": 20,
+      "Total": 1353.55,
+      "Currency": "USD",
+      "Status": "Draft"
+    },
+    {
+      "InvoiceNumber": "573400864",
+      "PurchaseOrderNumber": "5100063118",
+      "SupplierName": "Zones, Inc.",
+      "SupplierId": "0003014194",
+      "InvoiceDate": "2025-04-25",
+      "DueDate": "2025-05-27",
+      "Approver": "Michael Chen",
+      "AutoCore": true,
+      "LineItems": [
+        {
+          "ItemId": "10",
+          "Description": "Description: Surface Laptop 7",
+          "Quantity": 1,
+          "UnitPrice": 1129.65,
+          "TotalPrice": 1129.65
+        }
+      ],
+      "Subtotal": 1129.65,
+      "Tax": 17.19,
+      "Shipping": 12.5,
+      "Total": 1159.34,
+      "Currency": "USD",
+      "Status": "Pending Approval"
     }
   ]
 }

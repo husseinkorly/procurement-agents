@@ -17,10 +17,12 @@ public class PurchaseOrderPlugin
         PropertyNamingPolicy = null
     };
 
+    private readonly string _invoiceApiBaseUrl;
     public PurchaseOrderPlugin()
     {
         _httpClient = new HttpClient();
         _baseUrl = "http://localhost:5294";
+        _invoiceApiBaseUrl = "http://localhost:5136";
     }
 
     [KernelFunction("get_purchase_order")]
@@ -54,7 +56,7 @@ public class PurchaseOrderPlugin
         }
     }
 
-    [KernelFunction("get_purchase_orders")]
+    [KernelFunction("get_purchase_orders_ready_for_invoicing")]
     [Description("Get all purchase orders, with optional filtering by status.")]
     public async Task<string> GetPurchaseOrders(
         [Description("Filter by purchase order status (optional, e.g., 'Open', 'Closed')")] string? status = null)
@@ -143,13 +145,13 @@ public class PurchaseOrderPlugin
     }
 
     [KernelFunction("get_purchase_orders_with_draft_invoices")]
-    [Description("Get all purchase orders that have an invoice in the Draft stage. They are ready for review")]
+    [Description("Get all purchase orders that have an invoice with draft status. They are ready for review")]
     public async Task<string> GetPurchaseOrdersWithDraftInvoices()
     {
         try
         {
             // First get all purchase orders
-            string poUrl = $"{_baseUrl}/api/PurchaseOrders";
+            string poUrl = $"{_baseUrl}/api/PurchaseOrders?status=Open";
             var poResponse = await _httpClient.GetAsync(poUrl);
 
             if (!poResponse.IsSuccessStatusCode)
@@ -165,32 +167,57 @@ public class PurchaseOrderPlugin
                 return "No purchase orders found in the database.";
             }
             
-            // Filter purchase orders with drafts (using the Drafts property)
-            var purchaseOrdersWithDrafts = allPurchaseOrders
-                .Where(po => po.Drafts > 0)
-                .ToList();
-            
-            if (purchaseOrdersWithDrafts.Count == 0)
-            {
-                return "No purchase orders found with invoices in Draft stage.";
-            }
-            
             // Format the response
             StringBuilder result = new StringBuilder();
-            result.AppendLine($"Found {purchaseOrdersWithDrafts.Count} purchase orders with invoices in Draft stage:");
+            var purchaseOrdersWithDraftInvoices = 0;
+            var totalDraftInvoiceCount = 0;
+            
+            
+            // Process each purchase order
+            foreach (var po in allPurchaseOrders)
+            {
+                // Check if this PO has draft invoices using the correct endpoint
+                string invoiceUrl = $"{_invoiceApiBaseUrl}/api/Invoices/po/{po.PurchaseOrderNumber}?status=Draft";
+                var invoiceResponse = await _httpClient.GetAsync(invoiceUrl);
+                
+                if (!invoiceResponse.IsSuccessStatusCode)
+                {
+                    // If it's a 404, this means no invoices found, which is fine - continue to next PO
+                    if (invoiceResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    {
+                        continue;
+                    }
+                    return $"Error retrieving invoices for PO {po.PurchaseOrderNumber}: {invoiceResponse.StatusCode}";
+                }
+
+                var invoiceContent = await invoiceResponse.Content.ReadAsStringAsync();
+                var draftInvoices = JsonSerializer.Deserialize<List<Invoice>>(invoiceContent, _jsonOptions);
+
+                // Check if there are any draft invoices
+                if (draftInvoices != null && draftInvoices.Count > 0)
+                {
+                    purchaseOrdersWithDraftInvoices++;
+                    totalDraftInvoiceCount += draftInvoices.Count;
+                    
+                    result.AppendLine($"    PO #: {po.PurchaseOrderNumber}");
+                    result.AppendLine($"    Supplier: {po.SupplierName}");
+                    result.AppendLine($"    Draft Invoices: {draftInvoices.Count}");
+                    result.AppendLine($"    Status: {po.Status}");
+                    result.AppendLine($"    Total: ${po.Total:F2}");
+                    result.AppendLine();
+                }
+            }
+            
+            // Check if there are any POs with draft invoices
+            if (purchaseOrdersWithDraftInvoices == 0)
+            {
+                return "No purchase orders with draft invoices found.";
+            }
+            
+            // Display the results
+            result.AppendLine($"Found {purchaseOrdersWithDraftInvoices} purchase orders with {totalDraftInvoiceCount} total draft invoices:");
             result.AppendLine();
             
-            // Create a numbered list of POs for easy selection
-            for (int i = 0; i < purchaseOrdersWithDrafts.Count; i++)
-            {
-                var po = purchaseOrdersWithDrafts[i];
-                result.AppendLine($"[{i + 1}] PO #: {po.PurchaseOrderNumber}");
-                result.AppendLine($"    Supplier: {po.SupplierName}");
-                result.AppendLine($"    Drafts: {po.Drafts}");
-                result.AppendLine($"    Status: {po.Status}");
-                result.AppendLine($"    Total: ${po.Total:F2}");
-                result.AppendLine();
-            }
             
             // Add a prompt for the user to select a PO
             result.AppendLine("Which purchase order would you like to view draft invoices for? Please respond with the PO number.");

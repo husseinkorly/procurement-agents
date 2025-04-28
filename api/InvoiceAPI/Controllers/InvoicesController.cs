@@ -49,6 +49,22 @@ public class InvoicesController : ControllerBase
         }
     }
 
+    [HttpGet("po/{PurchaseOrderNumber}")]
+    public ActionResult<Invoice> GetInvoice(string PurchaseOrderNumber, [FromQuery] string? status = null)
+    {
+        try
+        {
+            _logger.LogInformation("Getting invoice details for {status} Purchase order: {PONumber} ", status, PurchaseOrderNumber);
+            
+            return Ok(_invoiceService.GetInvoicesByPOAndStatus(PurchaseOrderNumber, status));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving invoice {PONumber}", PurchaseOrderNumber);
+            return StatusCode(500, "An error occurred while retrieving the invoice");
+        }
+    }
+
     [HttpGet("{invoiceNumber}")]
     public ActionResult<Invoice> GetInvoice(string invoiceNumber)
     {
@@ -204,6 +220,30 @@ public class InvoicesController : ControllerBase
         {
             _logger.LogError(ex, "Error creating invoice for PO {PONumber}", invoice.PurchaseOrderNumber);
             return StatusCode(500, $"An error occurred while creating the invoice: {ex.Message}");
+        }
+    }
+
+    //create a new endpoint to delete an invoice
+    [HttpDelete("{invoiceNumber}")] 
+    public async Task<ActionResult> DeleteInvoice(string invoiceNumber)
+    {
+        try
+        {
+            _logger.LogInformation("Deleting invoice: {InvoiceNumber}", invoiceNumber);
+            
+            var deleted = await _invoiceService.DeleteInvoiceAsync(invoiceNumber);
+            
+            if (!deleted)
+            {
+                return NotFound($"Invoice {invoiceNumber} not found");
+            }
+            
+            return NoContent(); // HTTP 204 No Content
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting invoice {InvoiceNumber}", invoiceNumber);
+            return StatusCode(500, "An error occurred while deleting the invoice");
         }
     }
 }

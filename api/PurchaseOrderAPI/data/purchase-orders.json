@@ -24,8 +24,7 @@
       "Currency": "USD",
       "Status": "Open",
       "RequestorName": "John Smith",
-      "ApprovalDate": "null",
-      "Drafts": 0
+      "ApprovalDate": "null"
     },
     {
       "PurchaseOrderNumber": "5100063064",
@@ -51,8 +50,7 @@
       "Currency": "USD",
       "Status": "Open",
       "RequestorName": "Sarah Johnson",
-      "ApprovalDate": "null",
-      "Drafts": 2
+      "ApprovalDate": "null"
     },
     {
       "PurchaseOrderNumber": "5100062269",
@@ -92,8 +90,7 @@
       "Currency": "USD",
       "Status": "Open",
       "RequestorName": "Michael Chen",
-      "ApprovalDate": "2025-03-05",
-      "Drafts": 1
+      "ApprovalDate": "2025-03-05"
     },
     {
       "PurchaseOrderNumber": "0101321275",
@@ -119,8 +116,7 @@
       "Currency": "USD",
       "Status": "Open",
       "RequestorName": "Emma Wilson",
-      "ApprovalDate": "null",
-      "Drafts": 1
+      "ApprovalDate": "null"
     },
     {
       "PurchaseOrderNumber": "0101321049",
@@ -146,8 +142,7 @@
       "Currency": "USD",
       "Status": "Closed",
       "RequestorName": "David Rodriguez",
-      "ApprovalDate": "2025-01-20",
-      "Drafts": 0
+      "ApprovalDate": "2025-01-20"
     },
     {
       "PurchaseOrderNumber": "0101320993",
@@ -173,8 +168,7 @@
       "Currency": "USD",
       "Status": "Closed",
       "RequestorName": "Lisa Thompson",
-      "ApprovalDate": "2025-03-25",
-      "Drafts": 0
+      "ApprovalDate": "2025-03-25"
     },
     {
       "PurchaseOrderNumber": "0101313516",
@@ -200,8 +194,7 @@
       "Currency": "USD",
       "Status": "Open",
       "RequestorName": "Robert Blake",
-      "ApprovalDate": null,
-      "Drafts": 0
+      "ApprovalDate": null
     }
   ]
 }

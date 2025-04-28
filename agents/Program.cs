@@ -79,17 +79,28 @@ ChatCompletionAgent invoiceAgent = new()
     Description = "Invoice agent",
     Name = "InvoiceAgent",
     Instructions = """
-                        You are an invoice agent. You can help with invoice-related tasks.
+                        You are an invoice agent. You can help with invoice-related tasks such as retrieving, creating, and updating invoices.
 
                         Rules:
+                            - when users asks to view draft invoices, you should:
+                                - get the list of all purchase orders with draft invoices.
+                                - if user asks to view invoice draft, make sure to call the correct endpoint to get the draft invoice.
+                                - if user asks to update draft, then update the draft invoice with the given information.
+
                             - when the user asks for an creating an invoice, you should:
                                 - Generate the invoice template from given PO number
-                                - if the user asks an update for the templete, then update the invoice template with the given information
-                                - if user asks to view invoice draft, use the invoice template to build and show the invoice draft.
-                                - always use the latest invoice generated template.
+                                - if the user asks an update for the templete, then update the invoice template with the given information.
+                                - if user asks for POs ready for invoicing, the return POs with status "Open" only.
+                                - always use the latest invoice generated template unless asked to use draft invoice.
                                 - confirm the invoice with the user before creating it, and then creating it.
-                                - once invoice created (even if created from draft) add todo item for the next agent to approve the invoice once it is created.
-                            
+
+                            -when user asks to see POs ready for invoicing, you should:
+                                - get the list of all purchase orders with status "Open". Do not include the POs with draft invoices.
+                                - if there are no POs ready for invoicing, return a message saying "No POs ready for invoicing found."
+
+                            - once invoice created add todo item for the next agent to approve the invoice once it is created.
+                            - never create an invoice without showing the user the invoice first.
+                            - every time the user asks to create an invoice you should ask the user to confirm the invoice before creating it.
                             - always return your response in a nice HTML format including data table,
                               so the response will always contains the HTML content and the todo item if there is any.
                         """,
@@ -127,6 +138,8 @@ ChatCompletionAgent approvalAgent = new()
                             - if the invoice field "autoCore" is set to true, then approve the invoice automatically without asking the user.
                             - if the invoice field "autoCore" is set to false, then add a todo item for the next agent complete the good received.
 
+                        - frequently check for invoices with field "autoCore" set to true and approve them automatically.
+                        - frequently check for invoices with field "status" set to "Pending Approval" and see if they can be automatically approved.
                         always return your response in a nice HTML format including data table.
                         """,
     Kernel = kernel,
