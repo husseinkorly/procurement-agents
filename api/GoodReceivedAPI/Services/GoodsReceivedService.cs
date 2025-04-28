@@ -1,64 +1,51 @@
 using System.Text.Json;
 using GoodReceivedAPI.Models;
+using GoodReceivedAPI.Repositories;
 
 namespace GoodReceivedAPI.Services;
 
 public class GoodsReceivedService
 {
-    private readonly string _goodsReceivedFilePath;
+    private readonly ICosmosDbRepository<GoodsReceivedItem> _goodsRepository;
+    private readonly ILogger<GoodsReceivedService> _logger;
     private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
     {
         WriteIndented = true,
         PropertyNameCaseInsensitive = true,
         PropertyNamingPolicy = null
     };
-    private List<GoodsReceivedItem> _goodsItems = [];
+    private List<GoodsReceivedItem> _goodsItems = []; // In-memory cache
 
-    public GoodsReceivedService(IConfiguration configuration)
+    public GoodsReceivedService(
+        ICosmosDbRepository<GoodsReceivedItem> goodsRepository,
+        ILogger<GoodsReceivedService> logger,
+        IConfiguration configuration)
     {
-        // Set the path to the goods received database
-        _goodsReceivedFilePath = configuration["DataFilePath"] ?? 
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "gsr.json");
+        _goodsRepository = goodsRepository;
+        _logger = logger;
         
-        // Load goods received data immediately
-        LoadGoodsReceivedFromFile().GetAwaiter().GetResult();
+        // Initialize and load goods received items asynchronously
+        InitializeRepositoryAndLoadItems().GetAwaiter().GetResult();
     }
 
-    // Helper method to read goods received data from the JSON file
-    private async Task<List<GoodsReceivedItem>> LoadGoodsReceivedFromFile()
+    // Initialize the repository and load goods received items
+    private async Task InitializeRepositoryAndLoadItems()
     {
-        if (!File.Exists(_goodsReceivedFilePath))
+        try
         {
-            var directory = Path.GetDirectoryName(_goodsReceivedFilePath);
-            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
+            // Initialize the repository (create database and container if they don't exist)
+            await _goodsRepository.InitializeAsync();
             
-            // Create an empty database if the file doesn't exist
-            await SaveGoodsReceivedToFile(new List<GoodsReceivedItem>());
-            return new List<GoodsReceivedItem>();
+            // Load all goods received items from Cosmos DB to in-memory cache
+            _goodsItems = (await _goodsRepository.GetAllAsync()).ToList();
+            _logger.LogInformation("Loaded {Count} goods received items from Cosmos DB", _goodsItems.Count);
         }
-
-        string json = await File.ReadAllTextAsync(_goodsReceivedFilePath);
-        
-        // Handle empty file case
-        if (string.IsNullOrWhiteSpace(json))
+        catch (Exception ex)
         {
-            return new List<GoodsReceivedItem>();
+            _logger.LogError(ex, "Error initializing repository and loading goods received items");
+            // Initialize with empty list on error
+            _goodsItems = [];
         }
-        
-        var database = JsonSerializer.Deserialize<GoodsReceivedDatabase>(json, _jsonOptions);
-        _goodsItems = database?.Items ?? new List<GoodsReceivedItem>();
-        return _goodsItems;
-    }
-
-    // Helper method to save goods received data to the JSON file
-    private async Task SaveGoodsReceivedToFile(List<GoodsReceivedItem>? items = null)
-    {
-        var database = new GoodsReceivedDatabase { goodsReceived = items ?? _goodsItems };
-        string json = JsonSerializer.Serialize(database, _jsonOptions);
-        await File.WriteAllTextAsync(_goodsReceivedFilePath, json);
     }
 
     // Get goods received items by purchase order number
@@ -76,32 +63,88 @@ public class GoodsReceivedService
         return goodsItems.ToList();
     }
 
+    // Create a new goods received item
+    public async Task<GoodsReceivedItem> CreateGoodsReceivedAsync(GoodsReceivedItem item)
+    {
+        try
+        {
+            // Set LastModified timestamp
+            item.LastModified = DateTime.UtcNow;
+            
+            // Create in Cosmos DB
+            var createdItem = await _goodsRepository.CreateAsync(item);
+            
+            // Add to in-memory cache
+            _goodsItems.Add(createdItem);
+            
+            return createdItem;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating goods received item");
+            throw;
+        }
+    }
+
     // Update a goods received item
     public async Task<GoodsReceivedItem?> UpdateGoodsReceivedAsync(
         string poNumber, string itemId, string serialNumber, 
         string assetTagNumber, string status)
     {
-        // Find if there's an existing entry
-        var existingItem = _goodsItems.FirstOrDefault(g => 
-            g.PurchaseOrderNumber != null && g.PurchaseOrderNumber.Equals(poNumber, StringComparison.OrdinalIgnoreCase) &&
-            g.ItemId != null && g.ItemId.Equals(itemId, StringComparison.OrdinalIgnoreCase));
-
-        if (existingItem != null)
+        try
         {
-            // Update existing record
-            existingItem.SerialNumber = serialNumber;
-            existingItem.AssetTagNumber = assetTagNumber;
-            existingItem.Status = status;
-            existingItem.ReceivedDate = status.Equals("Received", StringComparison.OrdinalIgnoreCase) 
-                ? DateTime.Now.ToString("yyyy-MM-dd") 
-                : null;
-            
-            // Save changes
-            await SaveGoodsReceivedToFile();
-            
-            return existingItem;
-        }
+            // Find if there's an existing entry
+            var existingItem = _goodsItems.FirstOrDefault(g => 
+                g.PurchaseOrderNumber != null && g.PurchaseOrderNumber.Equals(poNumber, StringComparison.OrdinalIgnoreCase) &&
+                g.ItemId != null && g.ItemId.Equals(itemId, StringComparison.OrdinalIgnoreCase));
 
-        return null;
+            if (existingItem != null)
+            {
+                // Update existing record
+                existingItem.SerialNumber = serialNumber;
+                existingItem.AssetTagNumber = assetTagNumber;
+                existingItem.Status = status;
+                existingItem.ReceivedDate = status.Equals("Received", StringComparison.OrdinalIgnoreCase) 
+                    ? DateTime.Now.ToString("yyyy-MM-dd") 
+                    : null;
+                existingItem.LastModified = DateTime.UtcNow;
+                
+                // Update in Cosmos DB
+                var updatedItem = await _goodsRepository.UpdateAsync(
+                    existingItem, 
+                    existingItem.Id, 
+                    existingItem.PurchaseOrderNumber);
+                
+                // Update in-memory cache
+                var index = _goodsItems.FindIndex(i => i.Id == existingItem.Id);
+                if (index >= 0)
+                {
+                    _goodsItems[index] = updatedItem;
+                }
+                
+                return updatedItem;
+            }
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating goods received item");
+            throw;
+        }
+    }
+
+    // Refresh the in-memory cache from Cosmos DB
+    public async Task RefreshGoodsReceivedCacheAsync()
+    {
+        try
+        {
+            _goodsItems = (await _goodsRepository.GetAllAsync()).ToList();
+            _logger.LogInformation("Refreshed goods received cache with {Count} items", _goodsItems.Count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error refreshing goods received cache");
+        }
     }
 }

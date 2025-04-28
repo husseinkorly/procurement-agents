@@ -18,20 +18,14 @@ public class ApprovalsController : ControllerBase
     }
 
     [HttpPost("{invoiceNumber}/approve")]
-    public async Task<ActionResult<ApprovalResponse>> ApproveInvoice(string invoiceNumber, [FromBody] ApprovalRequest request)
+    public async Task<ActionResult<ApprovalResponse>> ApproveInvoice(string invoiceNumber)
     {
         try
         {
             _logger.LogInformation("Received approval request for invoice: {InvoiceNumber}", invoiceNumber);
-            
-            if (request == null || string.IsNullOrEmpty(request.ApproverName))
-            {
-                return BadRequest("Approver name is required");
-            }
-            
             // Use the service to process the approval
-            var result = await _approvalService.ApproveInvoiceAsync(invoiceNumber, request.ApproverName);
-            
+            var result = await _approvalService.ApproveInvoiceAsync(invoiceNumber);
+
             if (result.Success)
             {
                 return Ok(result);
@@ -47,14 +41,14 @@ public class ApprovalsController : ControllerBase
             return StatusCode(500, "An error occurred while processing the approval request");
         }
     }
-    
+
     [HttpGet("history")]
     public async Task<ActionResult<List<ApprovalHistory>>> GetApprovalHistory([FromQuery] string? invoiceNumber = null)
     {
         try
         {
             _logger.LogInformation("Getting approval history for invoice: {InvoiceNumber}", invoiceNumber ?? "all invoices");
-            
+
             var history = await _approvalService.GetApprovalHistoryAsync(invoiceNumber);
             return Ok(history);
         }

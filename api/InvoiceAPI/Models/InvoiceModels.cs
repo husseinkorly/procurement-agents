@@ -1,17 +1,12 @@
-namespace InvoiceAPI.Models;
+using System.Text.Json.Serialization;
 
-public class InvoiceLineItem
-{
-    public string? ItemId { get; set; }
-    public string? Description { get; set; }
-    public int Quantity { get; set; }
-    public decimal UnitPrice { get; set; }
-    public decimal TotalPrice { get; set; }
-}
+namespace InvoiceAPI.Models;
 
 public class Invoice
 {
+    public string? id { get; set; }
     public string? InvoiceNumber { get; set; }
+    public string? MicrosoftInvoiceNumber { get; set; }
     public string? PurchaseOrderNumber { get; set; }
     public string? SupplierName { get; set; }
     public string? SupplierId { get; set; }
@@ -28,18 +23,19 @@ public class Invoice
     public string? Status { get; set; }
 }
 
-public class InvoiceDatabase
+public class InvoiceLineItem
 {
-    public List<Invoice> Invoices { get; set; } = [];
+    public string? ItemId { get; set; }
+    public string? Description { get; set; }
+    public int Quantity { get; set; }
+    public decimal UnitPrice { get; set; }
+    public decimal TotalPrice { get; set; }
 }
 
-public class ApprovalRequest
+public class CosmosDbOptions
 {
-    public string? ApproverName { get; set; }
-}
-
-public class StatusUpdateRequest
-{
-    public string? Status { get; set; }
-    public string? UpdatedBy { get; set; }
+    public string? EndpointUri { get; set; }
+    public string? PrimaryKey { get; set; }
+    public string? DatabaseName { get; set; }
+    public string? ContainerName { get; set; }
 }

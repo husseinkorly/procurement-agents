@@ -17,6 +17,7 @@ public class InvoicePlugin
         PropertyNamingPolicy = null
     };
     private readonly string _purchaseOrderApiBaseUrl;
+    
     public InvoicePlugin()
     {
         _httpClient = new HttpClient();
@@ -38,7 +39,7 @@ public class InvoicePlugin
             {
                 var content = await response.Content.ReadAsStringAsync();
                 var invoice = JsonSerializer.Deserialize<Invoice>(content, _jsonOptions);
-                
+
                 if (invoice != null)
                 {
                     string result = $"Invoice #{invoice.InvoiceNumber}\n";
@@ -48,7 +49,7 @@ public class InvoicePlugin
                     result += $"Due Date: {invoice.DueDate}\n";
                     result += $"Status: {invoice.Status}\n";
                     result += $"Authorized Approver: {invoice.Approver}\n\n";
-                    
+
                     result += "Line Items:\n";
                     if (invoice.LineItems != null)
                     {
@@ -57,12 +58,12 @@ public class InvoicePlugin
                             result += $"- {item.Description}: {item.Quantity} x ${item.UnitPrice:F2} = ${item.TotalPrice:F2}\n";
                         }
                     }
-                    
+
                     result += $"\nSubtotal: ${invoice.Subtotal:F2}\n";
                     result += $"Tax: ${invoice.Tax:F2}\n";
                     result += $"Shipping: ${invoice.Shipping:F2}\n";
                     result += $"Total: ${invoice.Total:F2} {invoice.Currency}";
-                    
+
                     return result;
                 }
                 return content;
@@ -164,34 +165,38 @@ public class InvoicePlugin
                 return $"Cannot create an invoice for purchase order {poNumber} because it is closed.";
             }
 
-            // Create a new invoice template based on the purchase order
+            // Create a new invoice template based on the purchase order data
             var invoiceTemplate = new Invoice
             {
+                // Explicit removal of id field - let Cosmos DB handle it
                 PurchaseOrderNumber = purchaseOrder.PurchaseOrderNumber,
                 SupplierName = purchaseOrder.SupplierName,
                 SupplierId = purchaseOrder.SupplierId,
-                InvoiceDate = DateTime.Now.ToString("yyyy-MM-dd"),
-                DueDate = DateTime.Now.AddDays(30).ToString("yyyy-MM-dd"), // Default 30 days payment term
-                Currency = "USD",
+                InvoiceDate = DateTime.Now.ToString("yyyy-MM-dd"), // Current date for invoice date
+                DueDate = DateTime.Now.AddDays(30).ToString("yyyy-MM-dd"), // Use PO payment terms or default to 30 days
+                Currency = purchaseOrder.Currency ?? "USD", // Use PO currency or default to USD if null
                 Status = "Draft",
                 AutoCore = purchaseOrder.AutoCore,
+                Approver = purchaseOrder.RequestorName, // Get approver directly from PO
                 LineItems = purchaseOrder.LineItems?.Select(poItem => new LineItem
                 {
                     ItemId = poItem.ItemId,
                     Description = poItem.Description,
                     Quantity = poItem.Quantity,
                     UnitPrice = poItem.UnitPrice,
-                    TotalPrice = poItem.TotalPrice
+                    TotalPrice = poItem.Quantity * poItem.UnitPrice // Recalculate to ensure accuracy
                 }).ToList(),
-                Subtotal = purchaseOrder.Subtotal,
+                Subtotal = purchaseOrder.LineItems?.Sum(item => item.Quantity * item.UnitPrice) ?? 0,
                 Tax = purchaseOrder.Tax,
-                Shipping = purchaseOrder.Shipping,
-                Total = purchaseOrder.Total
+                Shipping = purchaseOrder.Shipping
             };
 
-            // Assign a temporary invoice number for the template
-            invoiceTemplate.InvoiceNumber = $"DRAFT-{DateTime.Now:yyyyMMddHHmmss}-{poNumber}";
-            
+            // Calculate total from the components
+            invoiceTemplate.Total = invoiceTemplate.Subtotal + invoiceTemplate.Tax + invoiceTemplate.Shipping;
+
+            // Generate a unique invoice number based on timestamp and PO
+            invoiceTemplate.InvoiceNumber = $"INV-{DateTime.Now:yyyyMMdd}-{purchaseOrder.PurchaseOrderNumber}";
+
             // Apply any field updates provided by the user
             if (fieldUpdates != null && fieldUpdates.Count > 0)
             {
@@ -199,10 +204,10 @@ public class InvoicePlugin
                 {
                     var parts = update.Split(':', 2);
                     if (parts.Length != 2) continue;
-                    
+
                     string field = parts[0].Trim();
                     string value = parts[1].Trim();
-                    
+
                     switch (field.ToLowerInvariant())
                     {
                         case "invoicedate":
@@ -230,7 +235,9 @@ public class InvoicePlugin
                                 invoiceTemplate.Total = invoiceTemplate.Subtotal + tax + invoiceTemplate.Shipping;
                             }
                             break;
-                        // Add more field updates as needed
+                        case "approver":
+                            invoiceTemplate.Approver = value;
+                            break;
                     }
                 }
             }
@@ -239,14 +246,18 @@ public class InvoicePlugin
             StringBuilder templateInfo = new StringBuilder();
             templateInfo.AppendLine($"INVOICE TEMPLATE FOR PURCHASE ORDER #{purchaseOrder.PurchaseOrderNumber}");
             templateInfo.AppendLine($"------------------------------------------------------");
-            templateInfo.AppendLine($"Draft Invoice #: {invoiceTemplate.InvoiceNumber}");
+            templateInfo.AppendLine($"Invoice #: {invoiceTemplate.InvoiceNumber} (Draft)");
             templateInfo.AppendLine($"Purchase Order: {invoiceTemplate.PurchaseOrderNumber}");
             templateInfo.AppendLine($"Supplier: {invoiceTemplate.SupplierName} (ID: {invoiceTemplate.SupplierId})");
             templateInfo.AppendLine($"Invoice Date: {invoiceTemplate.InvoiceDate}");
             templateInfo.AppendLine($"Due Date: {invoiceTemplate.DueDate}");
             templateInfo.AppendLine($"Status: {invoiceTemplate.Status}");
+            if (!string.IsNullOrEmpty(invoiceTemplate.Approver))
+            {
+                templateInfo.AppendLine($"Approver: {invoiceTemplate.Approver}");
+            }
             templateInfo.AppendLine();
-            
+
             templateInfo.AppendLine("Line Items:");
             if (invoiceTemplate.LineItems != null)
             {
@@ -255,7 +266,7 @@ public class InvoicePlugin
                     templateInfo.AppendLine($"- {item.Description}: {item.Quantity} x ${item.UnitPrice:F2} = ${item.TotalPrice:F2}");
                 }
             }
-            
+
             templateInfo.AppendLine();
             templateInfo.AppendLine($"Subtotal: ${invoiceTemplate.Subtotal:F2}");
             templateInfo.AppendLine($"Tax: ${invoiceTemplate.Tax:F2}");
@@ -265,25 +276,24 @@ public class InvoicePlugin
             templateInfo.AppendLine("To update this template, call this function again with field updates.");
             templateInfo.AppendLine("Example: [\"DueDate:2025-05-30\", \"Shipping:15.99\"]");
             templateInfo.AppendLine("When ready to create the final invoice, call the create_invoice_with_template function.");
-            
+
             // Serialize and save the template to a variable that could be retrieved later
-            // (For simplicity in this example, we'll just return the serialized template as a string suffix)
             templateInfo.AppendLine();
             templateInfo.AppendLine("TEMPLATE-DATA:" + JsonSerializer.Serialize(invoiceTemplate, _jsonOptions));
-            
+
             return templateInfo.ToString();
         }
         catch (Exception ex)
         {
             // Include more details about the exception
-            string exDetails = ex.InnerException != null ? 
-                $"{ex.Message} | Inner exception: {ex.InnerException.Message}" : 
+            string exDetails = ex.InnerException != null ?
+                $"{ex.Message} | Inner exception: {ex.InnerException.Message}" :
                 ex.Message;
-                
+
             return $"Error generating invoice template: {exDetails}";
         }
     }
-    
+
     [KernelFunction("create_invoice_with_template")]
     [Description("Create an invoice using the previously generated template.")]
     public async Task<string> CreateInvoiceWithTemplate(
@@ -301,40 +311,77 @@ public class InvoicePlugin
             {
                 jsonData = templateData; // Assume the full input is JSON
             }
-            
+
             // Deserialize the invoice template
             var invoiceTemplate = JsonSerializer.Deserialize<Invoice>(jsonData, _jsonOptions);
-            
+
             if (invoiceTemplate == null)
             {
                 return "Error: Could not parse the invoice template data.";
             }
-            
-            // Generate a final invoice number (replacing the draft one)
-            invoiceTemplate.InvoiceNumber = $"INV-{DateTime.Now:yyyyMMdd}-{invoiceTemplate.PurchaseOrderNumber}";
-            
-            // Set proper status for new invoice
+
+            // Update the status from Draft to Pending Approval
             invoiceTemplate.Status = "Pending Approval";
-            
-            // Assign an approver based on total amount (this logic could be more complex in real systems)
-            if (invoiceTemplate.Total <= 10000)
+
+            // Fetch the purchase order to get the approver information
+            if (string.IsNullOrEmpty(invoiceTemplate.PurchaseOrderNumber))
             {
-                invoiceTemplate.Approver = "JuniorApprover";
+                return "Error: Invoice template is missing purchase order number.";
             }
-            else if (invoiceTemplate.Total <= 50000)
+
+            try
             {
-                invoiceTemplate.Approver = "SeniorApprover";
+                // Get the purchase order details to determine the approver
+                string poUrl = $"{_purchaseOrderApiBaseUrl}/api/PurchaseOrders/{invoiceTemplate.PurchaseOrderNumber}";
+                var poResponse = await _httpClient.GetAsync(poUrl);
+
+                if (poResponse.IsSuccessStatusCode)
+                {
+                    var poContent = await poResponse.Content.ReadAsStringAsync();
+                    var purchaseOrder = JsonSerializer.Deserialize<PurchaseOrder>(poContent, _jsonOptions);
+
+                    if (purchaseOrder != null)
+                    {
+                        // Use the approver from the purchase order if available
+                        invoiceTemplate.Approver = !string.IsNullOrEmpty(purchaseOrder.RequestorName)
+                            ? purchaseOrder.RequestorName
+                            : GetApproverBasedOnAmount(invoiceTemplate.Total);
+
+                        // Ensure we have consistent data between PO and Invoice
+                        invoiceTemplate.Currency = purchaseOrder.Currency ?? invoiceTemplate.Currency;
+
+                        // If AutoCore flag is set and values from PO are available, use those values
+                        if (purchaseOrder.AutoCore && purchaseOrder.LineItems != null && purchaseOrder.LineItems.Any())
+                        {
+                            invoiceTemplate.AutoCore = purchaseOrder.AutoCore;
+                        }
+                    }
+                    else
+                    {
+                        // Fallback to amount-based approver if PO couldn't be parsed
+                        invoiceTemplate.Approver = GetApproverBasedOnAmount(invoiceTemplate.Total);
+                    }
+                }
+                else
+                {
+                    // Fallback to amount-based approver if PO couldn't be retrieved
+                    invoiceTemplate.Approver = GetApproverBasedOnAmount(invoiceTemplate.Total);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                invoiceTemplate.Approver = "ExecutiveApprover";
+                // Log the exception
+                Console.WriteLine($"Error fetching PO details: {ex.Message}");
+
+                // Fallback to amount-based approver
+                invoiceTemplate.Approver = GetApproverBasedOnAmount(invoiceTemplate.Total);
             }
-            
+
             // Create the invoice via POST to the invoice API
             string createUrl = $"{_baseUrl}/api/Invoices";
-            
+
             string jsonPayload = JsonSerializer.Serialize(invoiceTemplate, _jsonOptions);
-            
+
             var jsonContent = new StringContent(
                 jsonPayload,
                 Encoding.UTF8,
@@ -347,11 +394,11 @@ public class InvoicePlugin
             if (createResponse.IsSuccessStatusCode)
             {
                 var createdContent = await createResponse.Content.ReadAsStringAsync();
-                
+
                 try
                 {
                     var createdInvoice = JsonSerializer.Deserialize<Invoice>(createdContent, _jsonOptions);
-                    
+
                     if (createdInvoice != null)
                     {
                         return $"Invoice #{createdInvoice.InvoiceNumber} was successfully created for purchase order {createdInvoice.PurchaseOrderNumber}.\n" +
@@ -365,7 +412,7 @@ public class InvoicePlugin
                     return $"Invoice was created successfully. " +
                            $"Response: {createdContent} (Warning: Could not parse response: {jsonEx.Message})";
                 }
-                
+
                 return $"Invoice was created successfully. Raw response: {createdContent}";
             }
             else
@@ -376,11 +423,30 @@ public class InvoicePlugin
         }
         catch (Exception ex)
         {
-            string exDetails = ex.InnerException != null ? 
-                $"{ex.Message} | Inner exception: {ex.InnerException.Message}" : 
+            // Include more details about the exception
+            string exDetails = ex.InnerException != null ?
+                $"{ex.Message} | Inner exception: {ex.InnerException.Message}" :
                 ex.Message;
-                
+
             return $"Error creating invoice from template: {exDetails}";
+        }
+    }
+
+    // Helper method to determine approver based on invoice amount
+    private string GetApproverBasedOnAmount(double amount)
+    {
+        // This is a fallback method when we can't get approver from the PO
+        if (amount <= 10000)
+        {
+            return "JuniorApprover";
+        }
+        else if (amount <= 50000)
+        {
+            return "SeniorApprover";
+        }
+        else
+        {
+            return "ExecutiveApprover";
         }
     }
 
@@ -391,132 +457,27 @@ public class InvoicePlugin
     {
         try
         {
-            // First, get the purchase order details
-            string poUrl = $"{_purchaseOrderApiBaseUrl}/api/PurchaseOrders/{poNumber}";
-            var poResponse = await _httpClient.GetAsync(poUrl);
+            // First generate a template, then create from that template to maintain consistent behavior
+            var templateResult = await GenerateInvoiceTemplateFromPO(poNumber);
 
-            if (!poResponse.IsSuccessStatusCode)
+            // Extract the template data
+            if (!templateResult.Contains("TEMPLATE-DATA:"))
             {
-                if (poResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
-                {
-                    return $"Purchase order {poNumber} not found in the database.";
-                }
-                return $"Error retrieving purchase order data: {poResponse.StatusCode} - {await poResponse.Content.ReadAsStringAsync()}";
+                return templateResult; // If there was an error, just return it
             }
 
-            // Deserialize the purchase order
-            var poContent = await poResponse.Content.ReadAsStringAsync();
-            var purchaseOrder = JsonSerializer.Deserialize<PurchaseOrder>(poContent, _jsonOptions);
+            string jsonData = templateResult.Substring(templateResult.IndexOf("TEMPLATE-DATA:") + "TEMPLATE-DATA:".Length);
 
-            if (purchaseOrder == null)
-            {
-                return "Error parsing purchase order data.";
-            }
-
-            // Validate that purchase order is not closed
-            if (purchaseOrder.Status != null && purchaseOrder.Status.Equals("Closed", StringComparison.OrdinalIgnoreCase))
-            {
-                return $"Cannot create an invoice for purchase order {poNumber} because it is closed.";
-            }
-
-            // Create a new invoice based on the purchase order
-            var invoice = new Invoice
-            {
-                PurchaseOrderNumber = purchaseOrder.PurchaseOrderNumber,
-                SupplierName = purchaseOrder.SupplierName,
-                SupplierId = purchaseOrder.SupplierId,
-                InvoiceDate = DateTime.Now.ToString("yyyy-MM-dd"),
-                DueDate = DateTime.Now.AddDays(30).ToString("yyyy-MM-dd"), // Default 30 days payment term
-                Currency = "USD",
-                Status = "Pending Approval",
-                AutoCore = purchaseOrder.AutoCore,
-                LineItems = purchaseOrder.LineItems?.Select(poItem => new LineItem
-                {
-                    ItemId = poItem.ItemId,
-                    Description = poItem.Description,
-                    Quantity = poItem.Quantity,
-                    UnitPrice = poItem.UnitPrice,
-                    TotalPrice = poItem.TotalPrice
-                }).ToList(),
-                Subtotal = purchaseOrder.Subtotal,
-                Tax = purchaseOrder.Tax,
-                Shipping = purchaseOrder.Shipping,
-                Total = purchaseOrder.Total
-            };
-
-            // Assign an approver based on total amount (this logic could be more complex in real systems)
-            if (invoice.Total <= 10000)
-            {
-                invoice.Approver = "JuniorApprover";
-            }
-            else if (invoice.Total <= 50000)
-            {
-                invoice.Approver = "SeniorApprover";
-            }
-            else
-            {
-                invoice.Approver = "ExecutiveApprover";
-            }
-
-            // Generate a unique invoice number
-            invoice.InvoiceNumber = $"INV-{DateTime.Now:yyyyMMdd}-{poNumber}";
-
-            // Create the invoice via POST to the invoice API
-            string createUrl = $"{_baseUrl}/api/Invoices";
-            
-            // Log what we're sending to help debug
-            string jsonPayload = JsonSerializer.Serialize(invoice, _jsonOptions);
-            
-            var jsonContent = new StringContent(
-                jsonPayload,
-                Encoding.UTF8,
-                "application/json");
-
-            // Make the API call
-            var createResponse = await _httpClient.PostAsync(createUrl, jsonContent);
-
-            // Check if the request was successful
-            if (createResponse.IsSuccessStatusCode)
-            {
-                var createdContent = await createResponse.Content.ReadAsStringAsync();
-                
-                // Try to deserialize the response, but if it fails, still return a success message
-                try
-                {
-                    var createdInvoice = JsonSerializer.Deserialize<Invoice>(createdContent, _jsonOptions);
-                    
-                    if (createdInvoice != null)
-                    {
-                        return $"Invoice #{createdInvoice.InvoiceNumber} was successfully created for purchase order {poNumber}.\n" +
-                               $"Total amount: ${createdInvoice.Total:F2}\n" +
-                               $"Status: {createdInvoice.Status}\n" +
-                               $"Assigned approver: {createdInvoice.Approver}";
-                    }
-                }
-                catch (JsonException jsonEx)
-                {
-                    // If we can't deserialize the response but the status was successful,
-                    // still report success but include the raw response
-                    return $"Invoice for purchase order {poNumber} was created successfully. " +
-                           $"Response: {createdContent} (Warning: Could not parse response: {jsonEx.Message})";
-                }
-                
-                // If we get here, the status was success but we couldn't parse the invoice details
-                return $"Invoice for purchase order {poNumber} was created successfully. Raw response: {createdContent}";
-            }
-            else
-            {
-                var errorContent = await createResponse.Content.ReadAsStringAsync();
-                return $"Error creating invoice: HTTP {(int)createResponse.StatusCode} ({createResponse.StatusCode}) - {errorContent}";
-            }
+            // Now create the invoice using the template (reusing existing logic)
+            return await CreateInvoiceWithTemplate(jsonData);
         }
         catch (Exception ex)
         {
             // Include more details about the exception
-            string exDetails = ex.InnerException != null ? 
-                $"{ex.Message} | Inner exception: {ex.InnerException.Message}" : 
+            string exDetails = ex.InnerException != null ?
+                $"{ex.Message} | Inner exception: {ex.InnerException.Message}" :
                 ex.Message;
-                
+
             return $"Error creating invoice for purchase order: {exDetails}";
         }
     }

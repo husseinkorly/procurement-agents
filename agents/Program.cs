@@ -41,8 +41,8 @@ builder.Logging.AddConsole();
 // Configure Semantic Kernel
 var kernelBuilder = Kernel.CreateBuilder();
 kernelBuilder.AddAzureOpenAIChatCompletion(
-    deploymentName: "gpt-4o-agent",
-    endpoint: "https://oai-financecopilot-procurement-ppe.openai.azure.com",
+    deploymentName: "gpt-4o",
+    endpoint: "https://ai-finagentshub023086296405.openai.azure.com",
     credentials: new AzureCliCredential()
 );
 // Add logging to kernel
@@ -61,10 +61,10 @@ ChatCompletionAgent goodReceivedAgent = new()
     Description = "Good received agent",
     Name = "GoodReceivedAgent",
     Instructions = """
-                        You are a good received agent. You can help with good received-related tasks:
+                        You are a good received agent. You can help with good received-related tasks.
 
                         Rules:
-                            - the invoice field "autoCore" is set to false, then mark the items in the invoice as "Received" with random serial number and asset tag number.
+                            - If there is a new created invoice with "AutoCore" is set to true, then mark the items in the invoice as "Received" with random serial number and asset tag number.
                         
                         return your response in HTML format and incluude a summary of what you did.
                         """,
@@ -87,10 +87,8 @@ ChatCompletionAgent invoiceAgent = new()
                                 - if the user asks an update for the templete, then update the invoice template with the given information
                                 - always use the latest invoice generated template.
                                 - confirm the invoice with the user, and then creating it.
-                                - once invoice created add todo item for the next agent to apprve the invoice once it is created.
                             
-                            - always return your response in a nice HTML format including data table,
-                              so the response will always contains the HTML content and the todo item if there is any.
+                            - always return your response in a nice HTML format including data table.
                         """,
     Kernel = kernel,
     Arguments = new KernelArguments(new PromptExecutionSettings() { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() })
@@ -123,8 +121,7 @@ ChatCompletionAgent approvalAgent = new()
                         You are an invoice approval agent. You can help with invoice approval-related tasks.
 
                         Rules:
-                            - if the invoice field "autoCore" is set to true, then approve the invoice automatically without asking the user.
-                            - if the invoice field "autoCore" is set to false, then add a todo item for the next agent complete the good received.
+                            - If there is a new created invoice with "AutoCore" is set to true, approve the invoice automatically without asking for user's review.
 
                         always return your response in a nice HTML format including data table.
                         """,
@@ -157,10 +154,9 @@ purchaseOrderAgent.Kernel.Plugins.Add(KernelPluginFactory.CreateFromType<Purchas
 KernelFunction selectionFunction =
     AgentGroupChat.CreatePromptFunctionForStrategy(
         $$$"""
-        Examine the TODO first and choose the next participant.
-        If there is no TODO, choose the participant that is most relevant to the request and the last message.
-        State only the name of the chosen participant without explanation.
-        Never choose the participant named in the TODO.
+        Determine which participant takes the next turn in a conversation based on the the most recent participant.
+        State only the name of the participant to take the next turn.
+        Check with other participants if they need to take any offline actions on behalf of the user before terminating the conversation.
 
         Choose only from these participants:
         - InvoiceAgent
@@ -169,10 +165,10 @@ KernelFunction selectionFunction =
         - PurchaseOrderAgent
         - SafeLimitAgent
 
-        TODO:
-        {{$todo}}
+        History:
+        {{$history}}
         """,
-        safeParameterNames: "todo");
+        safeParameterNames: "history");
 
 KernelFunction terminationFunction =
     AgentGroupChat.CreatePromptFunctionForStrategy(
@@ -192,9 +188,9 @@ KernelFunctionSelectionStrategy selectionStrategy =
       // Parse the function response.
       ResultParser = (result) => result.GetValue<string>() ?? string.Empty,
       // The prompt variable name for the history argument.
-      HistoryVariableName = "todo",
+      HistoryVariableName = "history",
       // Save tokens by not including the entire history in the prompt
-      HistoryReducer = new ChatHistoryTruncationReducer(10),
+      HistoryReducer = new ChatHistoryTruncationReducer(20),
   };
 
 KernelFunctionTerminationStrategy terminationStrategy =

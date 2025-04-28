@@ -1,64 +1,51 @@
 using System.Text.Json;
 using PurchaseOrderAPI.Models;
+using PurchaseOrderAPI.Repositories;
 
 namespace PurchaseOrderAPI.Services;
 
 public class PurchaseOrderService
 {
-    private readonly string _purchaseOrdersFilePath;
+    private readonly ICosmosDbRepository<PurchaseOrder> _purchaseOrderRepository;
+    private readonly ILogger<PurchaseOrderService> _logger;
     private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
     {
         WriteIndented = true,
         PropertyNameCaseInsensitive = true,
         PropertyNamingPolicy = null // Keep property names as-is
     };
-    private List<PurchaseOrder> _purchaseOrders = [];
+    private List<PurchaseOrder> _purchaseOrders = []; // In-memory cache
 
-    public PurchaseOrderService(IConfiguration configuration)
+    public PurchaseOrderService(
+        ICosmosDbRepository<PurchaseOrder> purchaseOrderRepository,
+        ILogger<PurchaseOrderService> logger,
+        IConfiguration configuration)
     {
-        // Set the path to the purchase orders database
-        _purchaseOrdersFilePath = configuration["DataFilePath"] ?? 
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "purchase-orders.json");
+        _purchaseOrderRepository = purchaseOrderRepository;
+        _logger = logger;
         
-        // Load purchase orders immediately
-        LoadPurchaseOrdersFromFile().GetAwaiter().GetResult();
+        // Initialize and load purchase orders asynchronously
+        InitializeRepositoryAndLoadPurchaseOrders().GetAwaiter().GetResult();
     }
 
-    // Helper method to read purchase orders from the JSON file
-    private async Task<List<PurchaseOrder>> LoadPurchaseOrdersFromFile()
+    // Initialize the repository and load purchase orders
+    private async Task InitializeRepositoryAndLoadPurchaseOrders()
     {
-        if (!File.Exists(_purchaseOrdersFilePath))
+        try
         {
-            var directory = Path.GetDirectoryName(_purchaseOrdersFilePath);
-            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
+            // Initialize the repository (create database and container if they don't exist)
+            await _purchaseOrderRepository.InitializeAsync();
             
-            // Create an empty database if the file doesn't exist
-            await SavePurchaseOrdersToFile(new List<PurchaseOrder>());
-            return new List<PurchaseOrder>();
+            // Load all purchase orders from Cosmos DB to in-memory cache
+            _purchaseOrders = (await _purchaseOrderRepository.GetAllAsync()).ToList();
+            _logger.LogInformation("Loaded {Count} purchase orders from Cosmos DB", _purchaseOrders.Count);
         }
-
-        string json = await File.ReadAllTextAsync(_purchaseOrdersFilePath);
-        
-        // Handle empty file case
-        if (string.IsNullOrWhiteSpace(json))
+        catch (Exception ex)
         {
-            return new List<PurchaseOrder>();
+            _logger.LogError(ex, "Error initializing repository and loading purchase orders");
+            // Initialize with empty list on error
+            _purchaseOrders = [];
         }
-        
-        var database = JsonSerializer.Deserialize<PurchaseOrderDatabase>(json, _jsonOptions);
-        _purchaseOrders = database?.PurchaseOrders ?? new List<PurchaseOrder>();
-        return _purchaseOrders;
-    }
-
-    // Helper method to save purchase orders to the JSON file
-    private async Task SavePurchaseOrdersToFile(List<PurchaseOrder>? purchaseOrders = null)
-    {
-        var database = new PurchaseOrderDatabase { PurchaseOrders = purchaseOrders ?? _purchaseOrders };
-        string json = JsonSerializer.Serialize(database, _jsonOptions);
-        await File.WriteAllTextAsync(_purchaseOrdersFilePath, json);
     }
 
     // Get all purchase orders
@@ -81,22 +68,83 @@ public class PurchaseOrderService
             po.Status.Equals(status, StringComparison.OrdinalIgnoreCase)).ToList();
     }
 
+    // Create a new purchase order
+    public async Task<PurchaseOrder> CreatePurchaseOrderAsync(PurchaseOrder purchaseOrder)
+    {
+        try
+        {
+            // Set Id to be the same as PurchaseOrderNumber for easier retrieval
+            if (!string.IsNullOrEmpty(purchaseOrder.PurchaseOrderNumber))
+            {
+                purchaseOrder.Id = purchaseOrder.PurchaseOrderNumber;
+            }
+            
+            purchaseOrder.LastModified = DateTime.UtcNow;
+            
+            // Create in Cosmos DB
+            var createdPO = await _purchaseOrderRepository.CreateAsync(purchaseOrder);
+            
+            // Add to in-memory cache
+            _purchaseOrders.Add(createdPO);
+            
+            return createdPO;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating purchase order");
+            throw;
+        }
+    }
+
     // Update a purchase order status
     public async Task<PurchaseOrder?> UpdatePurchaseOrderStatusAsync(string poNumber, string status)
     {
-        var purchaseOrder = GetPurchaseOrderByNumber(poNumber);
-        
-        if (purchaseOrder == null)
+        try
         {
-            return null;
-        }
+            var purchaseOrder = GetPurchaseOrderByNumber(poNumber);
+            
+            if (purchaseOrder == null)
+            {
+                return null;
+            }
 
-        // Update the status
-        purchaseOrder.Status = status;
-        
-        // Save changes
-        await SavePurchaseOrdersToFile();
-        
-        return purchaseOrder;
+            // Update the status
+            purchaseOrder.Status = status;
+            purchaseOrder.LastModified = DateTime.UtcNow;
+            
+            // Update in Cosmos DB
+            var updatedPO = await _purchaseOrderRepository.UpdateAsync(
+                purchaseOrder, 
+                purchaseOrder.Id, 
+                purchaseOrder.PurchaseOrderNumber);
+            
+            // Update in-memory cache
+            var index = _purchaseOrders.FindIndex(po => po.PurchaseOrderNumber == poNumber);
+            if (index >= 0)
+            {
+                _purchaseOrders[index] = updatedPO;
+            }
+            
+            return updatedPO;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating purchase order status");
+            throw;
+        }
+    }
+
+    // Refresh the in-memory cache from Cosmos DB
+    public async Task RefreshPurchaseOrderCacheAsync()
+    {
+        try
+        {
+            _purchaseOrders = (await _purchaseOrderRepository.GetAllAsync()).ToList();
+            _logger.LogInformation("Refreshed purchase order cache with {Count} purchase orders", _purchaseOrders.Count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error refreshing purchase order cache");
+        }
     }
 }

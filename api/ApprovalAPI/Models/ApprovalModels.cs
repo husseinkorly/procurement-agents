@@ -1,10 +1,5 @@
 namespace ApprovalAPI.Models;
 
-public class ApprovalRequest
-{
-    public string? InvoiceNumber { get; set; }
-    public string? ApproverName { get; set; }
-}
 
 public class ApprovalResponse
 {
@@ -25,6 +20,7 @@ public class ApprovalLimitCheckResult
 public class Invoice
 {
     public string? InvoiceNumber { get; set; }
+    public string? MicrosoftInvoiceNumber { get; set; }
     public string? PurchaseOrderNumber { get; set; }
     public string? SupplierName { get; set; }
     public string? SupplierId { get; set; }
@@ -83,15 +79,18 @@ public class GoodsReceivedItem
 // Class to track approval history
 public class ApprovalHistory
 {
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public string? id { get; set; }
     public string? InvoiceNumber { get; set; }
     public string? ApproverName { get; set; }
-    public string? Action { get; set; }  // "Approved", "Rejected", etc.
-    public DateTime Timestamp { get; set; } = DateTime.Now;
+    public string? Action { get; set; }
     public string? Comments { get; set; }
 }
 
-public class ApprovalHistoryDatabase
+// Class to store Cosmos DB configuration
+public class CosmosDbOptions
 {
-    public List<ApprovalHistory> ApprovalRecords { get; set; } = [];
+    public string? EndpointUri { get; set; }
+    public string? PrimaryKey { get; set; }
+    public string? DatabaseName { get; set; }
+    public string? ContainerName { get; set; }
 }

@@ -12,6 +12,8 @@ public class PurchaseOrderLineItem
 
 public class PurchaseOrder
 {
+    // Add ID property required for Cosmos DB
+    public string Id { get; set; } = Guid.NewGuid().ToString();
     public string? PurchaseOrderNumber { get; set; }
     public string? SupplierName { get; set; }
     public string? SupplierId { get; set; }
@@ -28,9 +30,22 @@ public class PurchaseOrder
     public string? Status { get; set; }
     public string? RequestorName { get; set; }
     public string? ApprovalDate { get; set; }
+    // Add timestamp for optimistic concurrency
+    public string? _etag { get; set; }
+    // Add timestamp for tracking when the record was last modified
+    public DateTime LastModified { get; set; } = DateTime.UtcNow;
 }
 
 public class PurchaseOrderDatabase
 {
     public List<PurchaseOrder> PurchaseOrders { get; set; } = [];
+}
+
+// Class to store Cosmos DB configuration
+public class CosmosDbOptions
+{
+    public string? EndpointUri { get; set; }
+    public string? PrimaryKey { get; set; }
+    public string? DatabaseName { get; set; }
+    public string? ContainerName { get; set; }
 }

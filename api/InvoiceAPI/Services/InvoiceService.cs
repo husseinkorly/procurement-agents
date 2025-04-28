@@ -1,74 +1,43 @@
-using System.Text.Json;
 using InvoiceAPI.Models;
+using InvoiceAPI.Repositories;
 
 namespace InvoiceAPI.Services;
 
 public class InvoiceService
 {
-    private readonly string _invoicesFilePath;
-    private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
-    {
-        WriteIndented = true,
-        PropertyNameCaseInsensitive = true,
-        PropertyNamingPolicy = null // Don't use camelCase policy to match the mixed-case in the JSON
-    };
-    private List<Invoice> _invoices = [];
+    private readonly ICosmosDbRepository<Invoice> _invoiceRepository;
+    private readonly ILogger<InvoiceService> _logger;
+    private List<Invoice> _invoices = []; // In-memory cache
 
-    public InvoiceService(IConfiguration configuration)
+    public InvoiceService(
+        ICosmosDbRepository<Invoice> invoiceRepository,
+        ILogger<InvoiceService> logger,
+        IConfiguration configuration)
     {
-        // Set the path to the invoices database
-        _invoicesFilePath = configuration["DataFilePath"] ??
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "invoices.json");
+        _invoiceRepository = invoiceRepository;
+        _logger = logger;
 
-        // Load invoices immediately
-        LoadInvoicesFromFile().GetAwaiter().GetResult();
+        // Initialize and load invoices asynchronously
+        InitializeRepositoryAndLoadInvoices().GetAwaiter().GetResult();
     }
 
-    // Helper method to read all invoices from the JSON file
-    private async Task<List<Invoice>> LoadInvoicesFromFile()
+    // Initialize the repository and load invoices
+    private async Task InitializeRepositoryAndLoadInvoices()
     {
-        if (!File.Exists(_invoicesFilePath))
+        try
         {
-            var directory = Path.GetDirectoryName(_invoicesFilePath);
-            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
+            // Initialize the repository (create database and container if they don't exist)
+            await _invoiceRepository.InitializeAsync();
 
-            // Create an empty database if the file doesn't exist
-            await SaveInvoicesToFile(new List<Invoice>());
-            return new List<Invoice>();
+            // Load all invoices from Cosmos DB to in-memory cache
+            _invoices = (await _invoiceRepository.GetAllAsync()).ToList();
+            _logger.LogInformation("Loaded {Count} invoices from Cosmos DB", _invoices.Count);
         }
-
-        string json = await File.ReadAllTextAsync(_invoicesFilePath);
-
-        // Handle empty file case
-        if (string.IsNullOrWhiteSpace(json))
+        catch (Exception ex)
         {
-            return new List<Invoice>();
+            _logger.LogError(ex, "Error initializing repository and loading invoices");
+            _invoices = [];
         }
-
-        var database = JsonSerializer.Deserialize<InvoiceDatabase>(json, _jsonOptions);
-        _invoices = database?.Invoices ?? new List<Invoice>();
-        return _invoices;
-    }
-
-    // Helper method to save all invoices to the JSON file
-    private async Task SaveInvoicesToFile(List<Invoice>? invoices = null)
-    {
-        var database = new InvoiceDatabase { Invoices = invoices ?? _invoices };
-        string json = JsonSerializer.Serialize(database, _jsonOptions);
-        await File.WriteAllTextAsync(_invoicesFilePath, json);
-    }
-
-    // Generate a truly random invoice number
-    private string GenerateRandomInvoiceNumber()
-    {
-        // Use a combination of date, random number and guid for uniqueness
-        var random = new Random();
-        var randomPart = random.Next(1000, 9999).ToString();
-        var uniqueId = Guid.NewGuid().ToString("N")[..8].ToUpper(); // Get first 8 chars and make uppercase
-        return $"INV-{DateTime.Now:yyyyMMdd}-{randomPart}-{uniqueId}";
     }
 
     // Get all invoices
@@ -91,23 +60,25 @@ public class InvoiceService
             i.InvoiceNumber.Equals(invoiceNumber, StringComparison.OrdinalIgnoreCase));
     }
 
-    // Create a new invoice
+    // Create a new invoice or update a draft
     public async Task<Invoice?> CreateInvoiceAsync(Invoice invoice)
     {
         try
         {
             // Check if an invoice with the same number already exists
-            if (!string.IsNullOrEmpty(invoice.InvoiceNumber) &&
-                _invoices.Any(i => i.InvoiceNumber == invoice.InvoiceNumber))
-            {
-                // Instead of returning null, throw a specific exception
-                throw new InvalidOperationException($"Invoice with number {invoice.InvoiceNumber} already exists");
-            }
+            var existingInvoice = _invoices.FirstOrDefault(i =>
+                i.InvoiceNumber != null &&
+                i.InvoiceNumber.Equals(invoice.InvoiceNumber, StringComparison.OrdinalIgnoreCase));
 
-            // Generate a unique invoice number if one wasn't provided
-            if (string.IsNullOrEmpty(invoice.InvoiceNumber))
+            if (existingInvoice != null)
             {
-                invoice.InvoiceNumber = GenerateRandomInvoiceNumber();
+                // If existing invoice is not a draft, reject the operation
+                if (existingInvoice.Status != "Draft")
+                {
+                    throw new InvalidOperationException($"Invoice with number {invoice.InvoiceNumber} already exists.");
+                }
+                // If it's a draft, we'll update it with new data instead
+                _logger.LogInformation("Updating existing draft invoice: {InvoiceNumber}", invoice.InvoiceNumber);
             }
 
             // Set default values if not provided
@@ -152,42 +123,75 @@ public class InvoiceService
                 }
             }
 
-            // Add the invoice to our collection
-            _invoices.Add(invoice);
+            // setting MicrosoftInvoiceNumber to random 10 digits if not already set
+            if (string.IsNullOrEmpty(invoice.MicrosoftInvoiceNumber))
+            {
+                invoice.MicrosoftInvoiceNumber = "57" + new Random().Next(10000000, 99999999).ToString();
+            }
 
-            // Save the updated invoice list
-            await SaveInvoicesToFile();
+            Invoice resultInvoice;
 
-            return invoice;
+            // Update or create in Cosmos DB based on whether it's an existing draft
+            if (existingInvoice != null)
+            {
+                // Update the existing draft invoice
+                resultInvoice = await _invoiceRepository.UpdateAsync(invoice, invoice.InvoiceNumber!, invoice.InvoiceNumber!);
+
+                // Update in-memory cache
+                var index = _invoices.FindIndex(i => i.InvoiceNumber == invoice.InvoiceNumber);
+                if (index >= 0)
+                {
+                    _invoices[index] = resultInvoice;
+                }
+            }
+            else
+            {
+                invoice.id = Guid.NewGuid().ToString();
+                // Create new invoice in Cosmos DB
+                resultInvoice = await _invoiceRepository.CreateAsync(invoice);
+                // Add to in-memory cache
+                _invoices.Add(resultInvoice);
+            }
+
+            return resultInvoice;
         }
         catch (Exception ex)
         {
-            // Log the exception - in a real app you'd inject a logger here
-            Console.WriteLine($"Error in CreateInvoiceAsync: {ex.Message}");
-            // Rethrow to let the controller handle it properly
+            _logger.LogError(ex, "Error in CreateInvoiceAsync: {Message}", ex.Message);
             throw;
         }
     }
 
     // Update invoice status
-    public async Task<Invoice?> UpdateInvoiceStatusAsync(string invoiceNumber, string status, string updatedBy)
+    public async Task<Invoice?> UpdateInvoiceStatusAsync(string invoiceNumber, string status)
     {
-        var invoice = GetInvoiceByNumber(invoiceNumber);
-
-        if (invoice == null)
+        try
         {
-            return null;
+            var invoice = GetInvoiceByNumber(invoiceNumber);
+
+            if (invoice == null)
+            {
+                return null;
+            }
+            // Update invoice status
+            invoice.Status = status;
+
+            // Update in Cosmos DB - use InvoiceNumber as both id and partition key
+            var updatedInvoice = await _invoiceRepository.UpdateAsync(invoice, invoiceNumber, invoiceNumber);
+
+            // Update in-memory cache
+            var index = _invoices.FindIndex(i => i.InvoiceNumber == invoiceNumber);
+            if (index >= 0)
+            {
+                _invoices[index] = updatedInvoice;
+            }
+
+            return updatedInvoice;
         }
-
-        // Track previous status for validation or logging if needed
-        string previousStatus = invoice.Status ?? "Unknown";
-
-        // Update invoice status
-        invoice.Status = status;
-
-        // Save the updated invoice back to the file
-        await SaveInvoicesToFile();
-
-        return invoice;
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating invoice status: {Message}", ex.Message);
+            throw;
+        }
     }
 }

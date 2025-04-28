@@ -23,21 +23,16 @@ public class ApprovalPlugin
     }
 
     [KernelFunction("approve_invoice")]
-    [Description("Approve an invoice for payment by providing the invoice number and approver name")]
+    [Description("Approve an invoice for payment by providing the invoice number")]
     public async Task<string> ApproveInvoiceAsync(
-        [Description("The invoice number to approve")] string invoiceNumber,
-        [Description("The name of the person approving the invoice")] string approverName)
+        [Description("The invoice number to approve")] string invoiceNumber)
     {
         try
         {
             string url = $"{_baseUrl}/api/Approvals/{invoiceNumber}/approve";
 
-            // Create approval request with approver name
-            var approvalRequest = new { ApproverName = approverName };
-            var content = new StringContent(
-                JsonSerializer.Serialize(approvalRequest),
-                System.Text.Encoding.UTF8,
-                "application/json");
+            // No need to send approver name, the API will use the one from the invoice
+            var content = new StringContent("{}", System.Text.Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(url, content);
 
@@ -48,7 +43,7 @@ public class ApprovalPlugin
 
                 if (approvalResponse != null && approvalResponse.Success)
                 {
-                    return $"Invoice #{invoiceNumber} has been successfully approved by {approverName}.";
+                    return $"Invoice #{invoiceNumber} has been successfully approved using the designated approver.";
                 }
                 else if (approvalResponse != null)
                 {
